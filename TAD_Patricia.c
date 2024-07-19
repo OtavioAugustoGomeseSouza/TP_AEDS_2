@@ -1,15 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "TAD_Patricia.h"
 
-#define MAX_BIT 128  // Número máximo de bits de uma chave (ajustável conforme necessário)
-
-typedef struct PatriciaNode {
-    char *key;
-    int bit;
-    struct PatriciaNode *left;
-    struct PatriciaNode *right;
-} PatriciaNode;
 
 // Cria um novo nó da árvore
 PatriciaNode* createNode(char *key, int bit) {
