@@ -1,7 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/time.h>
+#ifndef TAD_TABELAHASH_H
+#define TAD_TABELAHASH_H
 
 #define HASH_SIZE 100  // Tamanho da tabela hash
 #define N 100  // Número de pesos
@@ -23,14 +21,16 @@ typedef struct {
     TipoPesos p;
 } HashTable;
 
-unsigned int hash_function(char *key) {}
+unsigned int hash_function(char *key, TipoPesos p);
 
-HashNode* createHashNode(char *key, int idDoc) {}
+HashNode* createHashNode(char *key, int idDoc);
 
-void insertHash(HashTable *hashTable, char *key, int idDoc) {}
+void insertHash(HashTable *hashTable, char *key, int idDoc);
 
-HashNode* searchHash(HashTable *hashTable, char *key) {}
+HashNode* searchHash(HashTable *hashTable, char *key);
 
-void freeHashTable(HashTable *hashTable) {}
+void freeHashTable(HashTable *hashTable);
 
-void GeraPesos(TipoPesos p) {}
+void GeraPesos(TipoPesos p);
+
+#endif

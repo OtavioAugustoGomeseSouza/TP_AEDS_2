@@ -2,26 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
+#include "TAD_TabelaHash.h"
 
 #define HASH_SIZE 100  // Tamanho da tabela hash
 #define N 100  // Número de pesos
 
 // Definir TipoPesos
 typedef int TipoPesos[N];
-
-// Estrutura para os nós da tabela hash
-typedef struct HashNode {
-    char *key;
-    int idDoc;
-    int qtde;
-    struct HashNode *next;
-} HashNode;
-
-// Estrutura para a tabela hash
-typedef struct {
-    HashNode *table[HASH_SIZE];
-    TipoPesos p;
-} HashTable;
 
 // Função de hash simples
 unsigned int hash_function(char *key, TipoPesos p) {

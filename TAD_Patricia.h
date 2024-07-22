@@ -12,14 +12,14 @@ typedef struct PatriciaNode {
 } PatriciaNode;
 
 
-PatriciaNode* createNode(char *key, int bit) {}
+PatriciaNode* createNode(char *key, int bit); 
 
-int bitCompare(char *key, int bit) {}
+int bitCompare(char *key, int bit); 
 
-int firstDifferentBit(char *key1, char *key2) {}
+int firstDifferentBit(char *key1, char *key2);
 
-PatriciaNode* insert(PatriciaNode *root, char *key) {}
+PatriciaNode* insert(PatriciaNode *root, char *key) ;
 
-int search(PatriciaNode *root, char *key) {}
+int search(PatriciaNode *root, char *key);
 
-void freePatricia(PatriciaNode *root) {}
+void freePatricia(PatriciaNode *root);
