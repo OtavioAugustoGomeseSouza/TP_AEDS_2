@@ -3,37 +3,7 @@
 #include <string.h>
 #include "TAD_TabelaHash.h"
 #include "TAD_Patricia.h"
-#define BASE_DIR "C:/Users/Otavio/Desktop/TP_AEDS_2/TP_AEDS_2/"
-
-typedef struct {
-    char fileName[256];
-    char potionName[256]; // Aloca memória suficiente para armazenar o nome do arquivo
-    int idDoc;
-} FileType;
-
-typedef struct {
-    HashTable hashTable;
-    PatriciaNode *root;
-} SearchType;
-
-void removeLeadingSpaces(char *str) {
-    char *start = str;
-
-    // Encontra o primeiro caractere não espaço
-    while (isspace((unsigned char)*start)) {
-        start++;
-    }
-
-    // Move os caracteres restantes para o início da string
-    if (start != str) {
-        char *dst = str;
-        while (*start) {
-            *dst++ = *start++;
-        }
-        *dst = '\0'; // Finaliza a string
-    }
-}
-
+#include "TAD_Arquivo.h"
 
 void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType) {
     
@@ -47,33 +17,15 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
         perror("Erro ao abrir o arquivo interno");
         return;
     }
-    printf("chegou na potion\n");
 
     fgets(fileType->potionName, sizeof(fileType->potionName), file);
-    printf("%s\n", fileType->potionName);
 
     char linha[1000];
-    char *token;
-    char *tokens[100];
+
     fgets(linha, sizeof(linha), file);
-    printf("%s\n", linha);
-    int i = 0;
 
-    token = strtok(linha, ";");
-    while (token != NULL && i < 100) {
-        tokens[i] = malloc((strlen(token) + 1) * sizeof(char));
-        if (tokens[i] == NULL) {
-            printf("Erro ao alocar memória\n");
-        }
-        strcpy(tokens[i], token);
-        removeLeadingSpaces(tokens[i]);
-        searchType->root = insert(searchType->root, tokens[i]);
-
-        i++;
-        token = strtok(NULL, ";");
-        
-        printf("%s\n", tokens[i-1]);
-    }
+    
+    strtok(linha, ";");
 
 
     

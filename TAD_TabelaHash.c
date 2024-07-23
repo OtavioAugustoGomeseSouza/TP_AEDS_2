@@ -14,7 +14,7 @@ typedef int TipoPesos[N];
 unsigned int hash_function(char *key, TipoPesos p) {
     unsigned int hash = 0;
     for (int i = 0; key[i] != '\0'; i++) {
-        hash = 31 * hash + key[i];
+        hash = hash + key[i]*p[i];
     }
     return hash % HASH_SIZE;
 }

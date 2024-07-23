@@ -125,10 +125,10 @@ int main() {
     root = insert(root, "Matheus");
     root = insert(root, "Daniel");
     root = insert(root, "Otavio");
-    root = insert(root, "ZEZE");  
+    root = insert(root, "ZEZE dasd");  
 
     printf("Searching for 'apple': %s\n", search(root, "Otavio") ? "Found" : "Not found");
-    printf("Searching for 'ZEZE': %s\n", search(root, "ZEZE") ? "Found" : "Not found");
+    printf("Searching for 'ZEZE': %s\n", search(root, "ZEZE dasd") ? "Found" : "Not found");
     printf("Searching for 'Otavio': %s\n", search(root, "Daniel") ? "Found" : "Not found");
     printf("Searching for 'orange': %s\n", search(root, "orange") ? "Found" : "Not found");
 
