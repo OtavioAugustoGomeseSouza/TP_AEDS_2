@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "TAD_TabelaHash.h"
 #include "TAD_Patricia.h"
-#define BASE_DIR "C:/Users/Otavio/Desktop/TP_AEDS_2/TP_AEDS_2/"
+
 
 typedef struct {
     char fileName[256];
@@ -38,7 +39,7 @@ void removeLeadingSpaces(char *str) {
 void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType) {
     
     char fullPath[512];
-    snprintf(fullPath, sizeof(fullPath), "%s%s%s", BASE_DIR, "Arquivos/ArquivosEntrada/", fileName);
+    snprintf(fullPath, sizeof(fullPath), "%s%s", "../Arquivos/ArquivosEntrada/", fileName);
 
     //printf("Arquivo: %s\n", fullPath);  
 
@@ -67,7 +68,9 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
         }
         strcpy(tokens[i], token);
         removeLeadingSpaces(tokens[i]);
-        searchType->root = insert(searchType->root, tokens[i]);
+
+        //searchType->root = insert(searchType->root, tokens[i]);
+        //insertHash(&searchType->hashTable, tokens[i]);
 
         i++;
         token = strtok(NULL, ";");
@@ -143,7 +146,7 @@ int main() {
     searchType.hashTable = hashTable;
     searchType.root = root;
 
-    char *nomeArquivo = BASE_DIR "Arquivos/entrada.txt";
+    char *nomeArquivo = "../Arquivos/entrada.txt";
     readentradaFile(nomeArquivo, &searchType);
     return 0;
 }

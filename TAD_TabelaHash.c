@@ -20,31 +20,58 @@ unsigned int hash_function(char *key, TipoPesos p) {
 }
 
 // Cria um novo nó da tabela hash
-HashNode* createHashNode(char *key, int idDoc) {
+HashNode* createHashNode(char *key) {
     HashNode *node = (HashNode *)malloc(sizeof(HashNode));
     if (node) {
         node->key = strdup(key);
-        node->idDoc = idDoc;
-        node->qtde = 1;
+        node->invertedIndexRoot = NULL;
         node->next = NULL;
     }
     return node;
 }
 
-// Inserção na tabela hash
-void insertHash(HashTable *hashTable, char *key, int idDoc) {
-    unsigned int hash = hash_function(key, hashTable->p);
-    HashNode *newNode = createHashNode(key, idDoc);
+InvertedIndex* createInvertedIndex(int idDoc, int qtde) {
+    InvertedIndex *new = (InvertedIndex *)malloc(sizeof(InvertedIndex));
+    new->idDoc = idDoc;
+    new->qtde = qtde;
+    new->next = NULL;
 
-    if (hashTable->table[hash] == NULL) {
-        hashTable->table[hash] = newNode;
+    return new;
+}
+
+void insertInvertedIndex(HashNode *node, int idDoc, int qtde) {
+    InvertedIndex *new = createInvertedIndex(idDoc, qtde);
+    InvertedIndex *current = node->invertedIndexRoot;
+
+    if (current == NULL) {
+        node->invertedIndexRoot = new;
     } else {
-        HashNode *current = hashTable->table[hash];
         while (current->next != NULL) {
             current = current->next;
         }
-        current->next = newNode;
+        current->next = new;
     }
+}
+
+// Inserção na tabela hash
+void insertHash(HashTable *hashTable, char *key) {
+    unsigned int hash = hash_function(key, hashTable->p);
+
+    if (searchHash(hashTable, key) != NULL)
+    {
+        HashNode *newNode = createHashNode(key);
+
+        if (hashTable->table[hash] == NULL) {
+            hashTable->table[hash] = newNode;
+        } else {
+            HashNode *current = hashTable->table[hash];
+            while (current->next != NULL) {
+                current = current->next;
+            }
+            current->next = newNode;
+        }
+    }
+    
 }
 
 // Busca na tabela hash
@@ -93,13 +120,13 @@ int main() {
 
     GeraPesos(hashTable.p);
 
-    insertHash(&hashTable, "apple", 1);
-    insertHash(&hashTable, "banana", 2);
-    insertHash(&hashTable, "orange", 3);
+    insertHash(&hashTable, "apple");
+    insertHash(&hashTable, "banana");
+    insertHash(&hashTable, "orange");
 
     HashNode *result = searchHash(&hashTable, "banana");
     if (result) {
-        printf("Found 'banana' in document %d\n", result->idDoc);
+        printf("Found 'banana' in document %d\n", result);
     } else {
         printf("'banana' not found\n");
     }

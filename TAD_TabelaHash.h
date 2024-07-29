@@ -7,11 +7,17 @@
 // Definir TipoPesos
 typedef int TipoPesos[N];
 
+//Estrutura índices invertidos
+typedef struct {
+	int idDoc;
+	int qtde;
+    struct InvertedIndex *next;
+} InvertedIndex;
+
 // Estrutura para os nós da tabela hash
 typedef struct HashNode {
     char *key;
-    int idDoc;
-    int qtde;
+    struct InvertedIndex *invertedIndexRoot;
     struct HashNode *next;
 } HashNode;
 
@@ -23,9 +29,13 @@ typedef struct {
 
 unsigned int hash_function(char *key, TipoPesos p);
 
-HashNode* createHashNode(char *key, int idDoc);
+HashNode* createHashNode(char *key);
 
-void insertHash(HashTable *hashTable, char *key, int idDoc);
+InvertedIndex* createInvertedIndex(int idDoc, int qtde);
+
+void insertInvertedIndex(HashNode *node, int idDoc, int qtde);
+
+void insertHash(HashTable *hashTable, char *key);
 
 HashNode* searchHash(HashTable *hashTable, char *key);
 
