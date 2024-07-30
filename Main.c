@@ -104,6 +104,25 @@ void printHashTable(HashTable *hashTable){
     }   
 }
 
+/*void printPatricia(PatriciaNode *root){
+    printf("Chaves inseridas na tabela Patricia:\n");
+    for (int i = 0; i < MAX_BIT * 8; i++) {
+        PatriciaNode *current = root;
+        while (current != NULL) {
+            printf("Chave: %s ->", current->key);
+            InvertedIndexPatricia *currentInvertedIndex = current->InvertedIndexPatriciaRoot;
+
+            while (currentInvertedIndex != NULL) {
+                printf("(Doc: %d, Qtde: %d),", currentInvertedIndex->idDoc, currentInvertedIndex->qtde);
+                currentInvertedIndex = currentInvertedIndex->nextInvertedIndexPatricia;
+            }
+            printf("\n");
+            
+            current = current->right;
+        }
+    }   
+}*/
+
 void removeLeadingSpaces(char *str) {
     char *start = str;
 
@@ -172,7 +191,7 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
         //printf("%s\n", tokens[i]);
         
 
-        //searchType->root = insert(searchType->root, tokens[i]);
+        searchType->root = insert(searchType->root, tokens[i]);
         insertHash(&searchType->hashTable, tokens[i], fileType->idDoc);
 
 
@@ -196,7 +215,8 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
       
         int timesAppeared = countOccurrences(Preparo, tokens[j]);
         HashNode *currentHashNode = searchHash(&searchType->hashTable, tokens[j]);
-        insertInvertedIndex(currentHashNode, fileType->idDoc, timesAppeared);
+        insertInvertedIndexHash(currentHashNode, fileType->idDoc, timesAppeared);
+        //insertInvertedIndexPatricia(searchType->root, fileType->idDoc, timesAppeared);
 
     }
     
@@ -286,7 +306,7 @@ int main() {
 
     char *nomeArquivo = "../Arquivos/entrada.txt";
     readentradaFile(nomeArquivo, &searchType);
-
+    printPatricia(&searchType.root);
     printHashTable(&searchType.hashTable);
 
     //busca dentro da pratricia

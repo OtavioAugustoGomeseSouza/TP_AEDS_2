@@ -6,9 +6,16 @@
 
 #define MAX_BIT 128  // Número máximo de bits de uma chave (ajustável conforme necessário)
 
+typedef struct {
+	int idDoc;
+	int qtde;
+    struct InvertedIndexPatricia *nextInvertedIndexPatricia;
+} InvertedIndexPatricia;
+
 typedef struct PatriciaNode {
     char *key;
     int bit;
+    InvertedIndexPatricia *InvertedIndexPatriciaRoot;
     struct PatriciaNode *left;
     struct PatriciaNode *right;
 } PatriciaNode;
@@ -22,8 +29,10 @@ int firstDifferentBit(char *key1, char *key2);
 
 PatriciaNode* insert(PatriciaNode *root, char *key) ;
 
-int search(PatriciaNode *root, char *key);
+PatriciaNode* search(PatriciaNode *root, char *key);
 
 void freePatricia(PatriciaNode *root);
+
+void insertInvertedIndexPatriciaPatricia(PatriciaNode *node, int idDoc, int qtde);
 
 #endif

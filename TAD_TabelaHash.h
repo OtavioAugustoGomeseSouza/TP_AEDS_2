@@ -34,7 +34,7 @@ HashNode* createHashNode(char *key);
 
 InvertedIndex* createInvertedIndex(int idDoc, int qtde);
 
-void insertInvertedIndex(HashNode *node, int idDoc, int qtde);
+void insertInvertedIndexHash(HashNode *node, int idDoc, int qtde);
 
 void insertHash(HashTable *hashTable, char *key, int idDoc);
 

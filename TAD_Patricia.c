@@ -3,7 +3,19 @@
 #include <string.h>
 #include "TAD_Patricia.h"
 
+void insertInvertedIndexPatricia(PatriciaNode *node, int idDoc, int qtde) {
+    InvertedIndexPatricia *new = createInvertedIndex(idDoc, qtde);
+    InvertedIndexPatricia *current = node->InvertedIndexPatriciaRoot;
 
+    if (current == NULL) {
+        node->InvertedIndexPatriciaRoot = new;
+    } else {
+        while (current->nextInvertedIndexPatricia != NULL) {
+            current = current->nextInvertedIndexPatricia;
+        }
+        current->nextInvertedIndexPatricia = new;
+    }
+}
 // Cria um novo nó da árvore
 PatriciaNode* createNode(char *key, int bit) {
     PatriciaNode *node = (PatriciaNode *)malloc(sizeof(PatriciaNode));
@@ -86,7 +98,7 @@ PatriciaNode* insert(PatriciaNode *root, char *key) {
 }
 
 // Procura por uma chave na árvore
-int search(PatriciaNode *root, char *key) {
+PatriciaNode* search(PatriciaNode *root, char *key) {
     if (!root) {
         return 0;
     }
@@ -103,7 +115,13 @@ int search(PatriciaNode *root, char *key) {
         bit = current->bit;
     }
 
-    return strcmp(current->key, key) == 0;
+    if (strcmp(current->key, key) == 0)
+    {
+        return current;
+    }else{
+        return NULL;
+    }
+     
 }
 
 // Libera a memória da árvore

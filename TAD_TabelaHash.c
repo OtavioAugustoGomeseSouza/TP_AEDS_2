@@ -50,7 +50,7 @@ InvertedIndex* createInvertedIndex(int idDoc, int qtde) {
     return new;
 }
 
-void insertInvertedIndex(HashNode *node, int idDoc, int qtde) {
+void insertInvertedIndexHash(HashNode *node, int idDoc, int qtde) {
     InvertedIndex *new = createInvertedIndex(idDoc, qtde);
     InvertedIndex *current = node->invertedIndexRoot;
 
