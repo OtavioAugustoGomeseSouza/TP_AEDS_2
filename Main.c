@@ -5,6 +5,7 @@
 #include "TAD_TabelaHash.h"
 #include "TAD_Patricia.h"
 //gcc -Wall -Wextra -g3 TAD_TabelaHash.c TAD_Patricia.c Main.c -o output/Main.exe
+//mingw32-make
 
 
 typedef struct {
@@ -72,8 +73,8 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
         printf("%s\n", tokens[i]);
         
 
-        searchType->root = insert(searchType->root, tokens[i]);
-        //insertHash(&searchType->hashTable, tokens[i]);
+        //searchType->root = insert(searchType->root, tokens[i]);
+        insertHash(&searchType->hashTable, tokens[i]);
 
         i++;
         token = strtok(NULL, ";");
