@@ -35,6 +35,34 @@ typedef struct {
     PatriciaNode *root;
 } SearchType;
 
+/*void toLowerCase(char *str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower((unsigned char)str[i]);
+    }
+}*/
+
+char *strcasestr(const char *haystack, const char *needle) {
+    if (!*needle) {
+        return (char *)haystack; // Se needle é uma string vazia, retorna haystack.
+    }
+
+    for (; *haystack; ++haystack) {
+        // Compara caracteres de haystack e needle ignorando a diferença entre maiúsculas e minúsculas.
+        if (tolower((unsigned char)*haystack) == tolower((unsigned char)*needle)) {
+            const char *h, *n;
+            for (h = haystack, n = needle; *h && *n; ++h, ++n) {
+                if (tolower((unsigned char)*h) != tolower((unsigned char)*n)) {
+                    break;
+                }
+            }
+            if (!*n) { // Se a string needle inteira foi encontrada.
+                return (char *)haystack;
+            }
+        }
+    }
+    return NULL; // Se não encontrou a string needle em haystack.
+}
+
 void removePunctuation(char *str) {
     char *src = str, *dst = str;
     while (*src) {
@@ -46,17 +74,14 @@ void removePunctuation(char *str) {
     *dst = '\0';
 }
 
-int countOccurrences(char *str, char *sub) {
+int countOccurrences(const char *a, const char *b){
     int count = 0;
-    char *temp = str;
-    int subLen = strlen(sub);
-
-    // Percorre a string principal procurando pela substring
-    while ((temp = strstr(temp, sub)) != NULL) {
-        count++;
-        temp += subLen; // Avança o ponteiro para continuar a busca
+    size_t lenb = strlen(b);
+    const char *p = a;
+    while(NULL != (p = strcasestr(p, b))){
+        ++count;
+        p += lenb;
     }
-
     return count;
 }
 
@@ -162,13 +187,17 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
     char Preparo[1000];
     fgets(Preparo, sizeof(Preparo), file);
     removePunctuation(Preparo);
+    
+    
 
 
     for (int j = 0; j < i; j++)
     {
+      
         int timesAppeared = countOccurrences(Preparo, tokens[j]);
         HashNode *currentHashNode = searchHash(&searchType->hashTable, tokens[j]);
         insertInvertedIndex(currentHashNode, fileType->idDoc, timesAppeared);
+
     }
     
    
