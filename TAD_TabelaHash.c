@@ -113,7 +113,7 @@ void GeraPesos(TipoPesos p) {
         p[i] = 1 + (int)(10000.0 * rand() / (RAND_MAX + 1.0));
 }
 
-int main() {
+/*int main() {
     // Exemplo de uso da tabela hash
     HashTable hashTable;
     memset(&hashTable, 0, sizeof(HashTable));
@@ -126,12 +126,13 @@ int main() {
 
     HashNode *result = searchHash(&hashTable, "banana");
     if (result) {
-        printf("Found 'banana' in document %d\n", result);
+    printf("Found 'banana' with key: %s\n", result->key);
     } else {
         printf("'banana' not found\n");
     }
 
+
     freeHashTable(&hashTable);
 
     return 0;
-}
+}*/

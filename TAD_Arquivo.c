@@ -8,7 +8,7 @@
 void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType) {
     
     char fullPath[512];
-    snprintf(fullPath, sizeof(fullPath), "%s%s%s", BASE_DIR, "Arquivos/ArquivosEntrada/", fileName);
+    snprintf(fullPath, sizeof(fullPath), "%s%s", "../Arquivos/ArquivosEntrada/", fileName);
 
     //printf("Arquivo: %s\n", fullPath);  
 
@@ -95,7 +95,7 @@ int main() {
     searchType.hashTable = hashTable;
     searchType.root = root;
 
-    char *nomeArquivo = BASE_DIR "Arquivos/entrada.txt";
+    char *nomeArquivo = "../Arquivos/entrada.txt";
     readentradaFile(nomeArquivo, &searchType);
     return 0;
 }

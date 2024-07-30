@@ -120,7 +120,7 @@ void freePatricia(PatriciaNode *root) {
     }
 }
 
-int main() {
+/*int main() {
     PatriciaNode *root = NULL;
     root = insert(root, "Matheus");
     root = insert(root, "Daniel");
@@ -134,4 +134,4 @@ int main() {
 
     freePatricia(root);
     return 0;
-}
+}*/

@@ -17,7 +17,7 @@ typedef struct {
 // Estrutura para os nós da tabela hash
 typedef struct HashNode {
     char *key;
-    struct InvertedIndex *invertedIndexRoot;
+    InvertedIndex *invertedIndexRoot;
     struct HashNode *next;
 } HashNode;
 

@@ -1,3 +1,5 @@
+#ifndef TAD_PATRICIA_H
+#define TAD_PATRICIA_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,3 +25,5 @@ PatriciaNode* insert(PatriciaNode *root, char *key) ;
 int search(PatriciaNode *root, char *key);
 
 void freePatricia(PatriciaNode *root);
+
+#endif
