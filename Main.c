@@ -35,6 +35,31 @@ typedef struct {
     PatriciaNode *root;
 } SearchType;
 
+void removePunctuation(char *str) {
+    char *src = str, *dst = str;
+    while (*src) {
+        if (!ispunct((unsigned char)*src)) {
+            *dst++ = *src;
+        }
+        src++;
+    }
+    *dst = '\0';
+}
+
+int countOccurrences(char *str, char *sub) {
+    int count = 0;
+    char *temp = str;
+    int subLen = strlen(sub);
+
+    // Percorre a string principal procurando pela substring
+    while ((temp = strstr(temp, sub)) != NULL) {
+        count++;
+        temp += subLen; // Avança o ponteiro para continuar a busca
+    }
+
+    return count;
+}
+
 void printHashTable(HashTable *hashTable){
     printf("Chaves inseridas na tabela hash:\n");
     for (int i = 0; i < HASH_SIZE; i++) {
@@ -72,6 +97,19 @@ void removeLeadingSpaces(char *str) {
     }
 }
 
+void removeFinalDot(char *str) {
+    int len = strlen(str);
+    // Verifica se a última posição tem um ponto final e, se sim, remove-o
+    for (int i = 0; i < len; i++)
+    {
+        if (str[i] == '.') 
+        {
+            str[i] = '\0';
+        }   
+
+    }
+}
+
 
 void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType) {
     
@@ -90,14 +128,14 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
     
     //printf("%s\n", fileType->potionName);
 
-    char linha[1000];
+    char ingredientes[1000];
     char *token;
     char *tokens[100];
-    fgets(linha, sizeof(linha), file);
-    //printf("%s\n", linha);
+    fgets(ingredientes, sizeof(ingredientes), file);
+    //printf("%s\n", ingredientes);
     int i = 0;
 
-    token = strtok(linha, ";");
+    token = strtok(ingredientes, ";");
     while (token != NULL && i < 100) {
         tokens[i] = malloc((strlen(token) + 1) * sizeof(char));
         if (tokens[i] == NULL) {
@@ -105,20 +143,38 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
         }
         strcpy(tokens[i], token);
         removeLeadingSpaces(tokens[i]);
+        removeFinalDot(tokens[i]);
         //printf("%s\n", tokens[i]);
         
 
         //searchType->root = insert(searchType->root, tokens[i]);
         insertHash(&searchType->hashTable, tokens[i], fileType->idDoc);
 
+
         //printf("inseriu \n");
 
         i++;
-        token = strtok(NULL, ";");
-        
-        
-        
+        token = strtok(NULL, ";");   
     }
+
+    
+
+    char Preparo[1000];
+    fgets(Preparo, sizeof(Preparo), file);
+    removePunctuation(Preparo);
+
+
+    for (int j = 0; j < i; j++)
+    {
+        int timesAppeared = countOccurrences(Preparo, tokens[j]);
+        HashNode *currentHashNode = searchHash(&searchType->hashTable, tokens[j]);
+        insertInvertedIndex(currentHashNode, fileType->idDoc, timesAppeared);
+    }
+    
+   
+
+
+    token = strtok(ingredientes, ";");
 
 
     
@@ -170,7 +226,7 @@ void readentradaFile(const char *fileName , SearchType *searchType) {
 
     for (int i = 0; i < numFiles; i++) {
         readArquivoFile(files[i].fileName, searchType, &files[i]);
-        printf("Nome arquivo: %s, Nome da pocao:%s, idDoc:%d inserido\n", files[i].fileName,files[i].potionName, files[i].idDoc);
+        //printf("Nome arquivo: %s, Nome da pocao:%s, idDoc:%d inserido\n", files[i].fileName,files[i].potionName, files[i].idDoc);
     }
     
 

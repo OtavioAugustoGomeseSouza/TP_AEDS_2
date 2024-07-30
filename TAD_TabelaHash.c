@@ -88,14 +88,14 @@ void insertHash(HashTable *hashTable, char *key, int idDoc) {
     while (currentHashNode != NULL) {
         if (strcmp(currentHashNode->key, key) == 0) {
             
-            InvertedIndex *currentInvertedIndex = searchInvertedIndex(currentHashNode, idDoc);
+            /*InvertedIndex *currentInvertedIndex = searchInvertedIndex(currentHashNode, idDoc);
             if (currentInvertedIndex == NULL)
             {
                 insertInvertedIndex(currentHashNode, idDoc, 1);
             }else{
                 currentInvertedIndex->qtde++;
             }
-            
+            */
             return;
         }
         currentHashNode = currentHashNode->nextHashNode;
@@ -106,7 +106,7 @@ void insertHash(HashTable *hashTable, char *key, int idDoc) {
     newNode->nextHashNode = hashTable->tableRoot[hash];
     //printf("apontando para o primeiro nó hash\n");
     hashTable->tableRoot[hash] = newNode;
-    insertInvertedIndex(newNode, idDoc, 1);
+    //insertInvertedIndex(newNode, idDoc, 1);
     
 }
 
