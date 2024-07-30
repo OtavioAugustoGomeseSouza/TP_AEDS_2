@@ -11,23 +11,24 @@ typedef int TipoPesos[N];
 typedef struct {
 	int idDoc;
 	int qtde;
-    struct InvertedIndex *next;
+    struct InvertedIndex *nextInvertedIndex;
 } InvertedIndex;
 
 // Estrutura para os nós da tabela hash
 typedef struct HashNode {
     char *key;
-    InvertedIndex *invertedIndexRoot;
-    struct HashNode *next;
+    int hashPosição;
+    InvertedIndex *invertedIndexRoot; //aponta horizontalmente para o primeiro elemento da lista invertida
+    struct HashNode *nextHashNode;
 } HashNode;
 
-// Estrutura para a tabela hash
+// Estrutura para a tabela hash 
 typedef struct {
-    HashNode *table[HASH_SIZE];
-    TipoPesos p;
+    HashNode *tableRoot; //aponta verticalmente para o primeiro elemento da tabela hash 
+    TipoPesos *p;
 } HashTable;
 
-unsigned int hash_function(char *key, TipoPesos p);
+unsigned int hash_function(char *key, TipoPesos *p);
 
 HashNode* createHashNode(char *key);
 
@@ -41,6 +42,6 @@ HashNode* searchHash(HashTable *hashTable, char *key);
 
 void freeHashTable(HashTable *hashTable);
 
-void GeraPesos(TipoPesos p);
+TipoPesos* GeraPesos();
 
 #endif

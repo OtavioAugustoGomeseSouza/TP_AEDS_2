@@ -11,10 +11,12 @@
 typedef int TipoPesos[N];
 
 // Função de hash simples
-unsigned int hash_function(char *key, TipoPesos p) {
+unsigned int hash_function(char *key, TipoPesos *p) {
+    printf("entrou na função hash_function\n");
     unsigned int hash = 0;
     for (int i = 0; key[i] != '\0'; i++) {
-        hash = hash + key[i]*p[i];
+        hash = hash + key[i] * (*p)[i];
+        printf("%d\n", (*p)[i]);
     }
     return hash % HASH_SIZE;
 }
@@ -25,7 +27,8 @@ HashNode* createHashNode(char *key) {
     if (node) {
         node->key = strdup(key);
         node->invertedIndexRoot = NULL;
-        node->next = NULL;
+        node->nextHashNode = NULL;
+        node->hashPosição = 0;
     }
     return node;
 }
@@ -55,22 +58,18 @@ void insertInvertedIndex(HashNode *node, int idDoc, int qtde) {
 
 // Inserção na tabela hash
 void insertHash(HashTable *hashTable, char *key) {
+    printf("entrou na função inserir hash\n");
+   
     unsigned int hash = hash_function(key, hashTable->p);
 
-    if (searchHash(hashTable, key) != NULL)
-    {
-        HashNode *newNode = createHashNode(key);
+    HashNode *newNode = createHashNode(key);
+    printf("entrou no primeiro if\n");
+    /*if (searchHash(hashTable, key) == NULL) {
+        newNode->hashPosição = hash;
+    } else {
+        //contador
+    }*/
 
-        if (hashTable->table[hash] == NULL) {
-            hashTable->table[hash] = newNode;
-        } else {
-            HashNode *current = hashTable->table[hash];
-            while (current->next != NULL) {
-                current = current->next;
-            }
-            current->next = newNode;
-        }
-    }
     
 }
 
@@ -103,15 +102,17 @@ void freeHashTable(HashTable *hashTable) {
 }
 
 // Função para gerar pesos aleatórios
-void GeraPesos(TipoPesos p) {
-    int i;
+TipoPesos* GeraPesos() {
+
     struct timeval semente;
+    TipoPesos *p = (TipoPesos *)malloc(sizeof(TipoPesos));
     // Utilizar o tempo como semente para a função srand()
     gettimeofday(&semente, NULL);
     srand((int)(semente.tv_sec + 1000000 * semente.tv_usec));
-    for (i = 0; i < N; i++)
-        p[i] = 1 + (int)(10000.0 * rand() / (RAND_MAX + 1.0));
-}
+    for (int i = 0; i < N; i++)
+        (*p)[i] = 1 + (int)(10000.0 * rand() / (RAND_MAX + 1.0));
+
+}   
 
 /*int main() {
     // Exemplo de uso da tabela hash

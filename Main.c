@@ -6,6 +6,22 @@
 #include "TAD_Patricia.h"
 //gcc -Wall -Wextra -g3 TAD_TabelaHash.c TAD_Patricia.c Main.c -o output/Main.exe
 //mingw32-make
+// .\exec.exe
+
+/*
+ como compilar
+ 
+ para criar o makefile precisa estar dentro da pasta C:\Users\Otavio\Desktop\TP_AEDS_2\TP_AEDS_2> e executar mingw32-make
+  será criado um exec.exe que não pode ser compilado
+  o exec.exe deve ser movido para a pasta output
+
+  então entrar no output com o comando cd output
+  executar o comando .\exec.exe
+
+  se quiser compilar novamente deve sair da pasta output e voltar para a pasta C:\Users\Otavio\Desktop\TP_AEDS_2\TP_AEDS_2>
+  para sair de uma pasta use o comando cd ..
+
+*/
 
 
 typedef struct {
@@ -42,8 +58,7 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
     
     char fullPath[512];
     snprintf(fullPath, sizeof(fullPath), "%s%s", "../Arquivos/ArquivosEntrada/", fileName);
-
-    //printf("Arquivo: %s\n", fullPath);  
+ 
 
     FILE *file = fopen(fullPath, "r");
     if (file == NULL) {
@@ -75,6 +90,8 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
 
         //searchType->root = insert(searchType->root, tokens[i]);
         insertHash(&searchType->hashTable, tokens[i]);
+
+        printf("inseriu \n");
 
         i++;
         token = strtok(NULL, ";");
@@ -144,14 +161,33 @@ void readentradaFile(const char *fileName , SearchType *searchType) {
 
 
 int main() {
+
+    TipoPesos *P = GeraPesos();
     HashTable hashTable;
+    hashTable.p = P;
     PatriciaNode *root = NULL;
+
+    
 
     SearchType searchType;
     searchType.hashTable = hashTable;
     searchType.root = root;
 
+    
+    
+
+    for (int i = 0; i < N; i++)
+    {
+        printf("%d\n", (*P)[i]);
+    }
+    
+
     char *nomeArquivo = "../Arquivos/entrada.txt";
     readentradaFile(nomeArquivo, &searchType);
+
+    //busca dentro da pratricia
+    printf("Searching for 'Pinch of Unicorn Horn': %s\n", search(searchType.root, "Pinch of Unicorn Horn") ? "Found" : "Not found");
+    
+    
     return 0;
 }
