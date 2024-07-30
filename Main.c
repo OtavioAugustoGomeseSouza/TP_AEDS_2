@@ -35,6 +35,25 @@ typedef struct {
     PatriciaNode *root;
 } SearchType;
 
+void printHashTable(HashTable *hashTable){
+    printf("Chaves inseridas na tabela hash:\n");
+    for (int i = 0; i < HASH_SIZE; i++) {
+        HashNode *currentHashNode = hashTable->tableRoot[i];
+        while (currentHashNode != NULL) {
+            printf("Chave: %s ->", currentHashNode->key);
+            InvertedIndex *currentInvertedIndex = currentHashNode->invertedIndexRoot;
+
+            while (currentInvertedIndex != NULL) {
+                printf("(Doc: %d, Qtde: %d),", currentInvertedIndex->idDoc, currentInvertedIndex->qtde);
+                currentInvertedIndex = currentInvertedIndex->nextInvertedIndex;
+            }
+            printf("\n");
+            
+            currentHashNode = currentHashNode->nextHashNode;
+        }
+    }   
+}
+
 void removeLeadingSpaces(char *str) {
     char *start = str;
 
@@ -65,16 +84,17 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
         perror("Erro ao abrir o arquivo interno");
         return;
     }
-    printf("chegou na potion\n");
+    //printf("chegou na potion\n");
 
     fgets(fileType->potionName, sizeof(fileType->potionName), file);
-    printf("%s\n", fileType->potionName);
+    
+    //printf("%s\n", fileType->potionName);
 
     char linha[1000];
     char *token;
     char *tokens[100];
     fgets(linha, sizeof(linha), file);
-    printf("%s\n", linha);
+    //printf("%s\n", linha);
     int i = 0;
 
     token = strtok(linha, ";");
@@ -85,13 +105,13 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
         }
         strcpy(tokens[i], token);
         removeLeadingSpaces(tokens[i]);
-        printf("%s\n", tokens[i]);
+        //printf("%s\n", tokens[i]);
         
 
         //searchType->root = insert(searchType->root, tokens[i]);
-        insertHash(&searchType->hashTable, tokens[i]);
+        insertHash(&searchType->hashTable, tokens[i], fileType->idDoc);
 
-        printf("inseriu \n");
+        //printf("inseriu \n");
 
         i++;
         token = strtok(NULL, ";");
@@ -150,6 +170,7 @@ void readentradaFile(const char *fileName , SearchType *searchType) {
 
     for (int i = 0; i < numFiles; i++) {
         readArquivoFile(files[i].fileName, searchType, &files[i]);
+        printf("Nome arquivo: %s, Nome da pocao:%s, idDoc:%d inserido\n", files[i].fileName,files[i].potionName, files[i].idDoc);
     }
     
 
@@ -181,8 +202,10 @@ int main() {
     char *nomeArquivo = "../Arquivos/entrada.txt";
     readentradaFile(nomeArquivo, &searchType);
 
+    printHashTable(&searchType.hashTable);
+
     //busca dentro da pratricia
-    printf("Searching for 'Pinch of Unicorn Horn': %s\n", search(searchType.root, "Pinch of Unicorn Horn") ? "Found" : "Not found");
+    //printf("Searching for 'Pinch of Unicorn Horn': %s\n", search(searchType.root, "Pinch of Unicorn Horn") ? "Found" : "Not found");
     
     
     return 0;

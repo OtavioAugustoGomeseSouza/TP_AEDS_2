@@ -36,7 +36,7 @@ InvertedIndex* createInvertedIndex(int idDoc, int qtde);
 
 void insertInvertedIndex(HashNode *node, int idDoc, int qtde);
 
-void insertHash(HashTable *hashTable, char *key);
+void insertHash(HashTable *hashTable, char *key, int idDoc);
 
 HashNode* searchHash(HashTable *hashTable, char *key);
 
@@ -45,5 +45,7 @@ void freeHashTable(HashTable *hashTable);
 TipoPesos* GeraPesos();
 
 void initHashTable(HashTable *hashTable);
+
+InvertedIndex* searchInvertedIndex(HashNode *node, int idDoc);
 
 #endif

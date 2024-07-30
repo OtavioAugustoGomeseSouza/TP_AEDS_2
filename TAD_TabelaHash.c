@@ -19,13 +19,13 @@ void initHashTable(HashTable *hashTable) {
 
 // Função de hash simples
 unsigned int hash_function(char *key, TipoPesos *p) {
-    printf("entrou na função hash_function\n");
+    //printf("entrou na função hash_function\n");
     unsigned int hash = 0;
     for (int i = 0; key[i] != '\0'; i++) {
         hash = hash + key[i] * (*p)[i];
-        printf("%d\n", (*p)[i]);
+        //printf("%d\n", (*p)[i]);
     }
-    printf("saiu do for\n");
+    //printf("saiu do for\n");
     return hash % HASH_SIZE;
 }
 
@@ -64,29 +64,50 @@ void insertInvertedIndex(HashNode *node, int idDoc, int qtde) {
     }
 }
 
-// Inserção na tabela hash
-void insertHash(HashTable *hashTable, char *key) {
-    printf("entrou na função inserir hash\n");
-
-    unsigned int hash = hash_function(key, hashTable->p);
-    printf("saiu da função hash_function\n");
-    HashNode *current = hashTable->tableRoot[hash];
+InvertedIndex* searchInvertedIndex(HashNode *node, int idDoc) {
+    InvertedIndex *current = node->invertedIndexRoot;
 
     while (current != NULL) {
-        if (strcmp(current->key, key) == 0) {
-            // A chave já existe, então podemos fazer algo aqui se necessário
+        if (current->idDoc == idDoc) {
+            return current;
+        }
+        current = current->nextInvertedIndex;
+    }
+
+    return NULL;
+}
+
+// Inserção na tabela hash
+void insertHash(HashTable *hashTable, char *key, int idDoc) {
+    //printf("entrou na função inserir hash\n");
+
+    unsigned int hash = hash_function(key, hashTable->p);
+    //printf("saiu da função hash_function\n");
+    HashNode *currentHashNode = hashTable->tableRoot[hash];
+
+    while (currentHashNode != NULL) {
+        if (strcmp(currentHashNode->key, key) == 0) {
+            
+            InvertedIndex *currentInvertedIndex = searchInvertedIndex(currentHashNode, idDoc);
+            if (currentInvertedIndex == NULL)
+            {
+                insertInvertedIndex(currentHashNode, idDoc, 1);
+            }else{
+                currentInvertedIndex->qtde++;
+            }
+            
             return;
         }
-        current = current->nextHashNode;
+        currentHashNode = currentHashNode->nextHashNode;
     }
 
     HashNode *newNode = createHashNode(key);
-    printf("criou o novo nó hash\n");
+    //printf("criou o novo nó hash\n");
     newNode->nextHashNode = hashTable->tableRoot[hash];
-    printf("apontando para o primeiro nó hash\n");
+    //printf("apontando para o primeiro nó hash\n");
     hashTable->tableRoot[hash] = newNode;
-    printf("apontando para o novo nó hash\n");
-    printf("inseriu na tabela hash\n");
+    insertInvertedIndex(newNode, idDoc, 1);
+    
 }
 
 // Busca na tabela hash
