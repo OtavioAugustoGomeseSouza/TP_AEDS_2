@@ -10,6 +10,13 @@
 // Definir TipoPesos
 typedef int TipoPesos[N];
 
+void initHashTable(HashTable *hashTable) {
+    for (int i = 0; i < HASH_SIZE; i++) {
+        hashTable->tableRoot[i] = NULL;
+    }
+    hashTable->p = GeraPesos();
+}
+
 // Função de hash simples
 unsigned int hash_function(char *key, TipoPesos *p) {
     printf("entrou na função hash_function\n");
@@ -18,6 +25,7 @@ unsigned int hash_function(char *key, TipoPesos *p) {
         hash = hash + key[i] * (*p)[i];
         printf("%d\n", (*p)[i]);
     }
+    printf("saiu do for\n");
     return hash % HASH_SIZE;
 }
 
@@ -28,7 +36,7 @@ HashNode* createHashNode(char *key) {
         node->key = strdup(key);
         node->invertedIndexRoot = NULL;
         node->nextHashNode = NULL;
-        node->hashPosição = 0;
+        node->hashValue = 0;
     }
     return node;
 }
@@ -37,7 +45,7 @@ InvertedIndex* createInvertedIndex(int idDoc, int qtde) {
     InvertedIndex *new = (InvertedIndex *)malloc(sizeof(InvertedIndex));
     new->idDoc = idDoc;
     new->qtde = qtde;
-    new->next = NULL;
+    new->nextInvertedIndex = NULL;
 
     return new;
 }
@@ -49,40 +57,48 @@ void insertInvertedIndex(HashNode *node, int idDoc, int qtde) {
     if (current == NULL) {
         node->invertedIndexRoot = new;
     } else {
-        while (current->next != NULL) {
-            current = current->next;
+        while (current->nextInvertedIndex != NULL) {
+            current = current->nextInvertedIndex;
         }
-        current->next = new;
+        current->nextInvertedIndex = new;
     }
 }
 
 // Inserção na tabela hash
 void insertHash(HashTable *hashTable, char *key) {
     printf("entrou na função inserir hash\n");
-   
+
     unsigned int hash = hash_function(key, hashTable->p);
+    printf("saiu da função hash_function\n");
+    HashNode *current = hashTable->tableRoot[hash];
+
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            // A chave já existe, então podemos fazer algo aqui se necessário
+            return;
+        }
+        current = current->nextHashNode;
+    }
 
     HashNode *newNode = createHashNode(key);
-    printf("entrou no primeiro if\n");
-    /*if (searchHash(hashTable, key) == NULL) {
-        newNode->hashPosição = hash;
-    } else {
-        //contador
-    }*/
-
-    
+    printf("criou o novo nó hash\n");
+    newNode->nextHashNode = hashTable->tableRoot[hash];
+    printf("apontando para o primeiro nó hash\n");
+    hashTable->tableRoot[hash] = newNode;
+    printf("apontando para o novo nó hash\n");
+    printf("inseriu na tabela hash\n");
 }
 
 // Busca na tabela hash
 HashNode* searchHash(HashTable *hashTable, char *key) {
     unsigned int hash = hash_function(key, hashTable->p);
-    HashNode *current = hashTable->table[hash];
+    HashNode *current = hashTable->tableRoot[hash];
 
     while (current != NULL) {
         if (strcmp(current->key, key) == 0) {
             return current;
         }
-        current = current->next;
+        current = current->nextHashNode;
     }
 
     return NULL;
@@ -91,14 +107,15 @@ HashNode* searchHash(HashTable *hashTable, char *key) {
 // Libera a memória da tabela hash
 void freeHashTable(HashTable *hashTable) {
     for (int i = 0; i < HASH_SIZE; i++) {
-        HashNode *current = hashTable->table[i];
+        HashNode *current = hashTable->tableRoot[i];
         while (current != NULL) {
             HashNode *temp = current;
-            current = current->next;
+            current = current->nextHashNode;
             free(temp->key);
             free(temp);
         }
     }
+    free(hashTable->p);
 }
 
 // Função para gerar pesos aleatórios

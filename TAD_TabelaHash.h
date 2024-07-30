@@ -17,14 +17,14 @@ typedef struct {
 // Estrutura para os nós da tabela hash
 typedef struct HashNode {
     char *key;
-    int hashPosição;
+    int hashValue;
     InvertedIndex *invertedIndexRoot; //aponta horizontalmente para o primeiro elemento da lista invertida
     struct HashNode *nextHashNode;
 } HashNode;
 
 // Estrutura para a tabela hash 
 typedef struct {
-    HashNode *tableRoot; //aponta verticalmente para o primeiro elemento da tabela hash 
+    HashNode *tableRoot[HASH_SIZE]; //aponta verticalmente para o primeiro elemento da tabela hash 
     TipoPesos *p;
 } HashTable;
 
@@ -43,5 +43,7 @@ HashNode* searchHash(HashTable *hashTable, char *key);
 void freeHashTable(HashTable *hashTable);
 
 TipoPesos* GeraPesos();
+
+void initHashTable(HashTable *hashTable);
 
 #endif

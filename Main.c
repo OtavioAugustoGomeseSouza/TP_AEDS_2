@@ -162,9 +162,9 @@ void readentradaFile(const char *fileName , SearchType *searchType) {
 
 int main() {
 
-    TipoPesos *P = GeraPesos();
+    
     HashTable hashTable;
-    hashTable.p = P;
+    initHashTable(&hashTable);
     PatriciaNode *root = NULL;
 
     
@@ -176,10 +176,6 @@ int main() {
     
     
 
-    for (int i = 0; i < N; i++)
-    {
-        printf("%d\n", (*P)[i]);
-    }
     
 
     char *nomeArquivo = "../Arquivos/entrada.txt";
