@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "tad_tabelahash.h": "c"
+        "tad_tabelahash.h": "c",
+        "time.h": "c"
     }
 }

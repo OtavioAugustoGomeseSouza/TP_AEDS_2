@@ -1,8 +1,8 @@
+#include "TAD_TabelaHash.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
-#include "TAD_TabelaHash.h"
 
 #define HASH_SIZE 100  // Tamanho da tabela hash
 #define N 100  // Número de pesos
@@ -151,6 +151,25 @@ TipoPesos* GeraPesos() {
         (*p)[i] = 1 + (int)(10000.0 * rand() / (RAND_MAX + 1.0));
 
 }   
+
+void printHashTable(HashTable *hashTable){
+    printf("Chaves inseridas na tabela hash:\n");
+    for (int i = 0; i < HASH_SIZE; i++) {
+        HashNode *currentHashNode = hashTable->tableRoot[i];
+        while (currentHashNode != NULL) {
+            printf("Chave: %s ->", currentHashNode->key);
+            InvertedIndex *currentInvertedIndex = currentHashNode->invertedIndexRoot;
+
+            while (currentInvertedIndex != NULL) {
+                printf("(Doc: %d, Qtde: %d),", currentInvertedIndex->idDoc, currentInvertedIndex->qtde);
+                currentInvertedIndex = currentInvertedIndex->nextInvertedIndex;
+            }
+            printf("\n");
+            
+            currentHashNode = currentHashNode->nextHashNode;
+        }
+    }   
+}
 
 /*int main() {
     // Exemplo de uso da tabela hash

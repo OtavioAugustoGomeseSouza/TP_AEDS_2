@@ -1,6 +1,7 @@
 #ifndef TAD_TABELAHASH_H
 #define TAD_TABELAHASH_H
 
+
 #define HASH_SIZE 100  // Tamanho da tabela hash
 #define N 100  // Número de pesos
 
@@ -28,6 +29,8 @@ typedef struct {
     TipoPesos *p;
 } HashTable;
 
+void initHashTable(HashTable *hashTable);
+
 unsigned int hash_function(char *key, TipoPesos *p);
 
 HashNode* createHashNode(char *key);
@@ -35,6 +38,8 @@ HashNode* createHashNode(char *key);
 InvertedIndex* createInvertedIndex(int idDoc, int qtde);
 
 void insertInvertedIndexHash(HashNode *node, int idDoc, int qtde);
+
+InvertedIndex* searchInvertedIndex(HashNode *node, int idDoc);
 
 void insertHash(HashTable *hashTable, char *key, int idDoc);
 
@@ -44,8 +49,6 @@ void freeHashTable(HashTable *hashTable);
 
 TipoPesos* GeraPesos();
 
-void initHashTable(HashTable *hashTable);
-
-InvertedIndex* searchInvertedIndex(HashNode *node, int idDoc);
+void printHashTable(HashTable *hashTable);
 
 #endif

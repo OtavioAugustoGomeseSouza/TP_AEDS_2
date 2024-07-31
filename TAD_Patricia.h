@@ -1,10 +1,6 @@
 #ifndef TAD_PATRICIA_H
 #define TAD_PATRICIA_H
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-#define MAX_BIT 128  // Número máximo de bits de uma chave (ajustável conforme necessário)
 
 typedef struct {
 	int idDoc;
@@ -14,25 +10,26 @@ typedef struct {
 
 typedef struct PatriciaNode {
     char *key;
-    int bit;
-    InvertedIndexPatricia *InvertedIndexPatriciaRoot;
     struct PatriciaNode *left;
     struct PatriciaNode *right;
+    InvertedIndexPatricia *InvertedIndexPatriciaRoot;
+    int bit;  // Pode ser usado como uma flag
 } PatriciaNode;
 
 
-PatriciaNode* createNode(char *key, int bit); 
+PatriciaNode* createNode(char *key); 
 
-int bitCompare(char *key, int bit); 
+PatriciaNode* insertPatricia(PatriciaNode *root, char *key) ;
 
-int firstDifferentBit(char *key1, char *key2);
-
-PatriciaNode* insert(PatriciaNode *root, char *key) ;
-
-PatriciaNode* search(PatriciaNode *root, char *key);
+PatriciaNode* searchPatricia(PatriciaNode *root, char *key);
 
 void freePatricia(PatriciaNode *root);
 
-void insertInvertedIndexPatriciaPatricia(PatriciaNode *node, int idDoc, int qtde);
+void insertInvertedIndexPatricia(PatriciaNode *node, int idDoc, int qtde);
+
+InvertedIndexPatricia* createInvertedIndexPatricia(int idDoc, int qtde);
+
+void insertInvertedIndexPatricia(PatriciaNode *node, int idDoc, int qtde);
+
 
 #endif

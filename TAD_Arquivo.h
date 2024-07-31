@@ -1,8 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ifndef TAD_ARQUIVO_H
+#define TAD_ARQUIVO_H
 #include "TAD_TabelaHash.h"
 #include "TAD_Patricia.h"
+
 
 typedef struct {
     char fileName[256];
@@ -15,7 +15,19 @@ typedef struct {
     PatriciaNode *root;
 } SearchType;
 
+void readentradaFile(const char *fileName , SearchType *searchType);
+
+void removeLeadingSpaces(char *str);
+
+void removeFinalDot(char *str);
+
 void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType);
 
-void readentradaFile(const char *fileName , SearchType *searchType);
+char *strcasestr(const char *haystack, const char *needle);
+
+void removePunctuation(char *str);
+
+int countOccurrences(const char *a, const char *b);
+
+#endif
 
