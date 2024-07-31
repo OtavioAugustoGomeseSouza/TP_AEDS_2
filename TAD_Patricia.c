@@ -3,6 +3,27 @@
 #include <stdlib.h>
 #include <string.h>
 
+void printPatricia(PatriciaNode *root) {
+    if (!root) {
+        return;
+    }
+
+    // Imprime a chave do nó atual
+    printf("Key: %s ->", root->key);
+
+    InvertedIndexPatricia *currentInvertedIndex = root->InvertedIndexPatriciaRoot;
+
+            while (currentInvertedIndex != NULL) {
+                printf("(Doc: %d, Qtde: %d),", currentInvertedIndex->idDoc, currentInvertedIndex->qtde);
+                currentInvertedIndex = currentInvertedIndex->nextInvertedIndexPatricia;
+            }
+            printf("\n");
+
+    // Chama recursivamente para os filhos esquerdo e direito
+    printPatricia(root->left);
+    printPatricia(root->right);
+}
+
 InvertedIndexPatricia* createInvertedIndexPatricia(int idDoc, int qtde) {
     InvertedIndexPatricia *new = (InvertedIndexPatricia *)malloc(sizeof(InvertedIndexPatricia));
     new->idDoc = idDoc;
