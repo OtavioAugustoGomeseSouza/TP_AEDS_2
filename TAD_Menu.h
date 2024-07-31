@@ -1,4 +1,4 @@
 #include "TAD_Arquivo.h"
-void menu(char *nomeArquivo, SearchType *searchType, HashTable *hashTable, PatriciaNode *root);
+void menu(char *nomeArquivo, SearchType *searchType);
 
 int getInt();

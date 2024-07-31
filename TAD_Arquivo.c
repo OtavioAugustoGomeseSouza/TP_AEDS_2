@@ -123,7 +123,7 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
         //printf("%s\n", tokens[i]);
         
 
-        //searchType->root = insert(searchType->root, tokens[i]);
+        searchType->root = insertPatricia(searchType->root, tokens[i]);
         insertHash(&searchType->hashTable, tokens[i], fileType->idDoc);
 
 

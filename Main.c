@@ -43,7 +43,7 @@ int main() {
 
 
     char *nomeArquivo = "../Arquivos/entrada.txt";
-    menu(nomeArquivo, &searchType, &hashTable, searchType.root);
+    menu(nomeArquivo, &searchType);
 
     //busca dentro da pratricia
     //printf("Searching for 'Pinch of Unicorn Horn': %s\n", search(searchType.root, "Pinch of Unicorn Horn") ? "Found" : "Not found");

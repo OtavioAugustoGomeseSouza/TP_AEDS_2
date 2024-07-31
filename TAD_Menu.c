@@ -4,7 +4,7 @@
 #include <string.h>
 #include <time.h>
 
-void menu(char *nomeArquivo, SearchType *searchType, HashTable *hashTable, PatriciaNode *root) {
+void menu(char *nomeArquivo, SearchType *searchType) {
     char ingrediente[100];
     int opcao;
     while(opcao != 4){
@@ -14,6 +14,7 @@ void menu(char *nomeArquivo, SearchType *searchType, HashTable *hashTable, Patri
             case 1:
                 printf("Recebendo arquivos de entrada\n");
                 readentradaFile(nomeArquivo, searchType);
+                printf("Arquivos inseridos\n");
                 break;
             case 2:
                 printf("\n \t Imprimir:\n 1. Árvore Patricia \n 2. Tabela Hash \n Escolha: ");
@@ -21,11 +22,11 @@ void menu(char *nomeArquivo, SearchType *searchType, HashTable *hashTable, Patri
                 switch (opcao2) {
                     case 1:
                         printf("Árvore Patricia\n");
-                        //printPatricia(root);
+                        printPatricia(searchType->root);
                         break;
                     case 2:
                         printf("Tabela Hash\n");
-                        printHashTable(hashTable);
+                        printHashTable(&searchType->hashTable);
                         break;
                     default:
                         printf("Opcao invalida\n");
@@ -36,7 +37,7 @@ void menu(char *nomeArquivo, SearchType *searchType, HashTable *hashTable, Patri
                 printf("Digite o nome do ingrediente que deseja buscar\n");
                 scanf("%s", ingrediente);
                 printf("Buscando ingrediente: %s\n", ingrediente);
-                HashNode *currentHashNode = searchHash(hashTable, ingrediente);
+                HashNode *currentHashNode = searchHash(&searchType->hashTable, ingrediente);
                 if (currentHashNode == NULL) {
                     printf("Ingrediente não encontrado\n");
                 } else {
