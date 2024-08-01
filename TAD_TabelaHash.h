@@ -21,6 +21,7 @@ typedef struct HashNode {
     int hashValue;
     InvertedIndex *invertedIndexRoot; //aponta horizontalmente para o primeiro elemento da lista invertida
     struct HashNode *nextHashNode;
+    int colisoes;
 } HashNode;
 
 // Estrutura para a tabela hash 

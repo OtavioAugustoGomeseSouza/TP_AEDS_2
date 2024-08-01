@@ -81,6 +81,7 @@ InvertedIndex* searchInvertedIndex(HashNode *node, int idDoc) {
 void insertHash(HashTable *hashTable, char *key, int idDoc) {
     //printf("entrou na função inserir hash\n");
 
+    
     unsigned int hash = hash_function(key, hashTable->p);
     //printf("saiu da função hash_function\n");
     HashNode *currentHashNode = hashTable->tableRoot[hash];
@@ -99,8 +100,9 @@ void insertHash(HashTable *hashTable, char *key, int idDoc) {
             return;
         }
         currentHashNode = currentHashNode->nextHashNode;
+        //colisoes++;
     }
-
+    //currentHashNode->colisoes = colisoes;
     HashNode *newNode = createHashNode(key);
     //printf("criou o novo nó hash\n");
     newNode->nextHashNode = hashTable->tableRoot[hash];
@@ -114,14 +116,18 @@ void insertHash(HashTable *hashTable, char *key, int idDoc) {
 HashNode* searchHash(HashTable *hashTable, char *key) {
     unsigned int hash = hash_function(key, hashTable->p);
     HashNode *current = hashTable->tableRoot[hash];
-
+    int colisoes=0;
     while (current != NULL) {
         if (strcmp(current->key, key) == 0) {
             return current;
         }
         current = current->nextHashNode;
+        //contador de colisoes
+        colisoes++;
+        //atualiza o campo de colisões
+        current->colisoes = colisoes;
     }
-
+    
     return NULL;
 }
 
@@ -190,6 +196,7 @@ void printHashTable(HashTable *hashTable){
     for (int i = 0; i < count; i++) {
         HashNode *node = searchHash(hashTable, keys[i]);
         printf("Chave: %s ->", node->key);
+       printf(" (Colisoes: %d)", node->colisoes);
         InvertedIndex *currentInvertedIndex = node->invertedIndexRoot;
         while (currentInvertedIndex != NULL) {
             printf(" (Doc: %d, Qtde: %d)", currentInvertedIndex->idDoc, currentInvertedIndex->qtde);

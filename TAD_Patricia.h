@@ -14,6 +14,7 @@ typedef struct PatriciaNode {
     struct PatriciaNode *right;
     InvertedIndexPatricia *InvertedIndexPatriciaRoot;
     int bit;  // Pode ser usado como uma flag
+    int seeking_count;
 } PatriciaNode;
 
 

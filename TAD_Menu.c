@@ -78,7 +78,7 @@ void CalculodeRelevancia(SearchType *searchType, TermoBusca *termoBusca, int num
         w[j].idDoc = -1;  // Valor default indicando que não foi encontrado
         w[j].wi = 0.0;
     }
-
+    //Calculo do W(i)(j)
     while (termoBusca[i].ingrediente != NULL || i < numTermos) {
         // Procura o nó da árvore Patricia que contém o termo atual
         PatriciaNode* NoAtual = searchPatricia(searchType->root, termoBusca[i].ingrediente);
@@ -93,19 +93,19 @@ void CalculodeRelevancia(SearchType *searchType, TermoBusca *termoBusca, int num
                 
                 w[index].idDoc = current->idDoc;
                 w[index].wi = (current->qtde) * (log2(totalDocs) / numDocsWithTerm);
-                printf("%i\n",w[index].idDoc);
-                printf("%i\n",current->qtde);
+                printf("ID:%i\n",w[index].idDoc);
+                printf("W(i):%i\n",current->qtde);
                 // Impressão para depuração
-                printf("Quantidade: %d\nTotal Docs: %d\nDocs com Termo: %d\n", current->qtde, totalDocs, numDocsWithTerm);
-                printf("Relevância para o documento %d: %f\n", w[index].idDoc, w[index].wi);
+                //printf("Quantidade: %d\nTotal Docs: %d\nDocs com Termo: %d\n", current->qtde, totalDocs, numDocsWithTerm);
+                //printf("Relevância para o documento %d: %f\n", w[index].idDoc, w[index].wi);
 
                 current = current->nextInvertedIndexPatricia;
                 index++;
             }
         }
+       
         i++;
     }
-
     // Liberar memória alocada
     free(w);
 }

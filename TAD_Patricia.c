@@ -10,6 +10,7 @@ void printPatricia(PatriciaNode *root) {
 
     // Imprime a chave do nó atual
     printf("Key: %s ->", root->key);
+    printf(" (Seeking: %d)", root->seeking_count);
 
     InvertedIndexPatricia *currentInvertedIndex = root->InvertedIndexPatriciaRoot;
 
@@ -106,6 +107,8 @@ PatriciaNode* insertPatricia(PatriciaNode *root, char *key) {
 PatriciaNode* searchPatricia(PatriciaNode *root, char *key) {
     PatriciaNode *current = root;
     while (current) {
+        //colisoes de busca
+        current->seeking_count++;
         if (strcmp(key, current->key) < 0) {
             current = current->left;
         } else if (strcmp(key, current->key) > 0) {
