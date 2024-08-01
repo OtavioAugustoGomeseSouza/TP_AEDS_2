@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include "TAD_Arquivo.h"
 
-void readentradaFile(const char *fileName , SearchType *searchType) {
+FileType* readentradaFile(const char *fileName , SearchType *searchType) {
     FILE *file = fopen(fileName, "r");
     if (file == NULL) {
         perror("Erro ao abrir o arquivo");
@@ -44,14 +44,39 @@ void readentradaFile(const char *fileName , SearchType *searchType) {
         //printf("Arquivo: %s\n", files[i].fileName);
     }
 
+    printf("Existem %d arquivos a serem lidos\n", numFiles);
+
+    fclose(file);
+
+    return files;
+
+
+}
+
+void readAllFiles(const char *fileName, FileType* files ,SearchType *searchType){
+
+    FILE *file = fopen(fileName, "r");
+    if (file == NULL) {
+        perror("Erro ao abrir o arquivo");
+        return;
+    }
+
+    int numFiles;
+    if (fscanf(file, "%d", &numFiles) != 1) {
+        printf("Erro ao ler o número de arquivos\n");
+        fclose(file);
+        return;
+    }
+
     for (int i = 0; i < numFiles; i++) {
         readArquivoFile(files[i].fileName, searchType, &files[i]);
         //printf("Nome arquivo: %s, Nome da pocao:%s, idDoc:%d inserido\n", files[i].fileName,files[i].potionName, files[i].idDoc);
     }
     
-
-    free(files);
     fclose(file);
+    free(files);
+    
+
 }
 
 
@@ -122,7 +147,7 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
         removeFinalDot(tokens[i]);
         //printf("%s\n", tokens[i]);
         
-
+        
         searchType->root = insertPatricia(searchType->root, tokens[i]);
         insertHash(&searchType->hashTable, tokens[i], fileType->idDoc);
 
@@ -133,7 +158,7 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
         token = strtok(NULL, ";");   
     }
 
-
+    fileType->ni = i;
     char Preparo[1000];
     fgets(Preparo, sizeof(Preparo), file);
     removePunctuation(Preparo);

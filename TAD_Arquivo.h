@@ -8,6 +8,7 @@ typedef struct {
     char fileName[256];
     char potionName[256]; // Aloca memória suficiente para armazenar o nome do arquivo
     int idDoc;
+    int ni;
 } FileType;
 
 typedef struct {
@@ -15,7 +16,11 @@ typedef struct {
     PatriciaNode *root;
 } SearchType;
 
-void readentradaFile(const char *fileName , SearchType *searchType);
+typedef struct {
+    char ingrediente[256];
+} TermoBusca;
+
+FileType* readentradaFile(const char *fileName , SearchType *searchType);
 
 void removeLeadingSpaces(char *str);
 
@@ -28,6 +33,8 @@ char *strcasestr(const char *haystack, const char *needle);
 void removePunctuation(char *str);
 
 int countOccurrences(const char *a, const char *b);
+
+void readAllFiles(const char *fileName, FileType* files ,SearchType *searchType);
 
 #endif
 

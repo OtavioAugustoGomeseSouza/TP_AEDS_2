@@ -34,4 +34,5 @@ void insertInvertedIndexPatricia(PatriciaNode *node, int idDoc, int qtde);
 void printPatricia(PatriciaNode *root);
 
 
+
 #endif

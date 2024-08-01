@@ -7,17 +7,23 @@
 void menu(char *nomeArquivo, SearchType *searchType) {
     char ingrediente[100];
     int opcao;
-    while(opcao != 4){
-        printf("\n\t MENU:\n [1] Receber arquivos de entrada\n [2] Imprimir\n [3] Buscar ingrediente\n [4] Sair\nEscolha: ");
+    FileType * ListaArquivos;
+    while(opcao != 5){
+        printf("\n\t MENU:\n [1] Receber arquivos de entrada\n [2] Construir Indice Invertido\n [3] Imprimir\n [4] Buscar ingrediente\n [5] Sair\nEscolha: ");
         opcao = getInt();
         switch (opcao) {
             case 1:
                 printf("Recebendo arquivos de entrada\n");
-                readentradaFile(nomeArquivo, searchType);
+                ListaArquivos = readentradaFile(nomeArquivo, searchType);
                 printf("Arquivos inseridos\n");
                 break;
-            case 2:
-                printf("\n \t Imprimir:\n 1. Árvore Patricia \n 2. Tabela Hash \n Escolha: ");
+            case 2: 
+                printf("Construindo Indice Invertido\n");  
+                readAllFiles(nomeArquivo, ListaArquivos, searchType);
+                
+                break;
+            case 3:
+                printf("\n \t Imprimir:\n [1] Árvore Patricia \n [2] Tabela Hash \n Escolha: ");
                 int opcao2 = getInt();
                 switch (opcao2) {
                     case 1:
@@ -33,21 +39,22 @@ void menu(char *nomeArquivo, SearchType *searchType) {
                         break;
                 }
                 break;
-            case 3:
-                printf("Digite o nome do ingrediente que deseja buscar\n");
-                scanf("%s", ingrediente);
-                printf("Buscando ingrediente: %s\n", ingrediente);
-                HashNode *currentHashNode = searchHash(&searchType->hashTable, ingrediente);
-                if (currentHashNode == NULL) {
-                    printf("Ingrediente não encontrado\n");
-                } else {
-                    InvertedIndex *currentInvertedIndex = currentHashNode->invertedIndexRoot;
-                    printf("ID do ingrediente: %d\n", currentHashNode->key);
-                    printf("Quantidade de ocorrências: %d\n", currentInvertedIndex->qtde);
-                    printf("ID do arquivo: %d\n", currentInvertedIndex->idDoc);
-                }
-                break;
             case 4:
+                printf("Digite quantos termo deseja buscar\n");
+                opcao2 = getInt();
+                for (int i = 0; i < opcao2; i++){
+                    printf("Digite o nome do termo que deseja buscar\n");
+                    scanf("%s", ingrediente);
+                }
+                scanf("%s", ingrediente);
+                TermoBusca *termoBusca[opcao2];
+                printf("Buscando ingrediente: %s\n", ingrediente);
+                for (int i = 0; i < opcao2; i++){
+                    scanf("%s", termoBusca[i]->ingrediente);
+                }
+                //buscar(searchType, ingrediente);
+                break;
+            case 5:
                 printf("Saindo...\n");
                 break;
             default:
@@ -62,3 +69,4 @@ int getInt() {
     scanf("%d", &num);
     return num;
 }
+
