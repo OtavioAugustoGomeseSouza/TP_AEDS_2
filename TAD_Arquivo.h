@@ -12,13 +12,12 @@ typedef struct {
 } FileType;
 
 typedef struct {
+    int numArq;
     HashTable hashTable;
     PatriciaNode *root;
 } SearchType;
 
-typedef struct {
-    char ingrediente[256];
-} TermoBusca;
+
 
 FileType* readentradaFile(const char *fileName , SearchType *searchType);
 

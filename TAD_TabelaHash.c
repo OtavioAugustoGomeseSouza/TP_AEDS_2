@@ -152,23 +152,54 @@ TipoPesos* GeraPesos() {
 
 }   
 
-void printHashTable(HashTable *hashTable){
-    printf("Chaves inseridas na tabela hash:\n");
-    for (int i = 0; i < HASH_SIZE; i++) {
-        HashNode *currentHashNode = hashTable->tableRoot[i];
-        while (currentHashNode != NULL) {
-            printf("Chave: %s ->", currentHashNode->key);
-            InvertedIndex *currentInvertedIndex = currentHashNode->invertedIndexRoot;
+int compareStrings(const void *a, const void *b) {
+    return strcmp(*(const char **)a, *(const char **)b);
+}
 
-            while (currentInvertedIndex != NULL) {
-                printf("(Doc: %d, Qtde: %d),", currentInvertedIndex->idDoc, currentInvertedIndex->qtde);
-                currentInvertedIndex = currentInvertedIndex->nextInvertedIndex;
-            }
-            printf("\n");
-            
-            currentHashNode = currentHashNode->nextHashNode;
+
+void printHashTable(HashTable *hashTable){
+    // Contar número de chaves na tabela hash
+    int count = 0;
+    for (int i = 0; i < HASH_SIZE; i++) {
+        HashNode *current = hashTable->tableRoot[i];
+        while (current != NULL) {
+            count++;
+            current = current->nextHashNode;
         }
-    }   
+    }
+
+    // Armazenar chaves em um array
+    char **keys = (char **)malloc(count * sizeof(char *));
+    int index = 0;
+    for (int i = 0; i < HASH_SIZE; i++) {
+        HashNode *current = hashTable->tableRoot[i];
+        while (current != NULL) {
+            keys[index++] = current->key;
+            current = current->nextHashNode;
+        }
+    }
+
+    
+    // Ordenar o array de chaves
+    qsort(keys, count, sizeof(char *), compareStrings);
+
+
+
+    // Imprimir chaves e índices invertidos em ordem alfabética
+    printf("Chaves inseridas na tabela hash em ordem alfabética:\n");
+    for (int i = 0; i < count; i++) {
+        HashNode *node = searchHash(hashTable, keys[i]);
+        printf("Chave: %s ->", node->key);
+        InvertedIndex *currentInvertedIndex = node->invertedIndexRoot;
+        while (currentInvertedIndex != NULL) {
+            printf(" (Doc: %d, Qtde: %d)", currentInvertedIndex->idDoc, currentInvertedIndex->qtde);
+            currentInvertedIndex = currentInvertedIndex->nextInvertedIndex;
+        }
+        printf("\n");
+    }
+
+    // Liberar memória alocada para o array de chaves
+    free(keys);  
 }
 
 /*int main() {

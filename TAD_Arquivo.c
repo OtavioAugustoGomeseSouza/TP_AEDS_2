@@ -44,6 +44,7 @@ FileType* readentradaFile(const char *fileName , SearchType *searchType) {
         //printf("Arquivo: %s\n", files[i].fileName);
     }
 
+    searchType->numArq = numFiles;
     printf("Existem %d arquivos a serem lidos\n", numFiles);
 
     fclose(file);
@@ -55,25 +56,13 @@ FileType* readentradaFile(const char *fileName , SearchType *searchType) {
 
 void readAllFiles(const char *fileName, FileType* files ,SearchType *searchType){
 
-    FILE *file = fopen(fileName, "r");
-    if (file == NULL) {
-        perror("Erro ao abrir o arquivo");
-        return;
-    }
+    
 
-    int numFiles;
-    if (fscanf(file, "%d", &numFiles) != 1) {
-        printf("Erro ao ler o número de arquivos\n");
-        fclose(file);
-        return;
-    }
-
-    for (int i = 0; i < numFiles; i++) {
+    for (int i = 0; i < searchType->numArq; i++) {
         readArquivoFile(files[i].fileName, searchType, &files[i]);
         //printf("Nome arquivo: %s, Nome da pocao:%s, idDoc:%d inserido\n", files[i].fileName,files[i].potionName, files[i].idDoc);
     }
     
-    fclose(file);
     free(files);
     
 

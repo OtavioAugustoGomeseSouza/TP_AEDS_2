@@ -15,12 +15,10 @@ void menu(char *nomeArquivo, SearchType *searchType) {
             case 1:
                 printf("Recebendo arquivos de entrada\n");
                 ListaArquivos = readentradaFile(nomeArquivo, searchType);
-                printf("Arquivos inseridos\n");
                 break;
             case 2: 
                 printf("Construindo Indice Invertido\n");  
                 readAllFiles(nomeArquivo, ListaArquivos, searchType);
-                
                 break;
             case 3:
                 printf("\n \t Imprimir:\n [1] Árvore Patricia \n [2] Tabela Hash \n Escolha: ");
@@ -40,18 +38,13 @@ void menu(char *nomeArquivo, SearchType *searchType) {
                 }
                 break;
             case 4:
-                printf("Digite quantos termo deseja buscar\n");
-                opcao2 = getInt();
-                for (int i = 0; i < opcao2; i++){
-                    printf("Digite o nome do termo que deseja buscar\n");
-                    scanf("%s", ingrediente);
-                }
-                scanf("%s", ingrediente);
-                TermoBusca *termoBusca[opcao2];
-                printf("Buscando ingrediente: %s\n", ingrediente);
-                for (int i = 0; i < opcao2; i++){
-                    scanf("%s", termoBusca[i]->ingrediente);
-                }
+                //printf("Digite quantos termo deseja buscar\n");
+                //opcao2 = getInt();
+                //TermoBusca termoBusca[opcao2];
+                //for (int i = 0; i < opcao2; i++){
+                  //  printf("Digite o nome do termo que deseja buscar\n");
+                    //scanf("%s", termoBusca[i].ingrediente);
+                //}
                 //buscar(searchType, ingrediente);
                 break;
             case 5:
@@ -70,3 +63,24 @@ int getInt() {
     return num;
 }
 
+void CalculodeRelevancia(SearchType *searchType, TermoBusca *termoBusca, int numTermos){
+    int i=0;
+    while(termoBusca[i].ingrediente != NULL){
+        PatriciaNode* NoAtual = searchPatricia(searchType->root, termoBusca[i].ingrediente);
+        if( NoAtual != NULL){
+            
+
+        }
+        i++;
+    }
+
+    for (int i = 0; i < numTermos; i++)
+    {
+        for (int j = 0; j < searchType->numArq; j++)
+        {
+            
+        }
+        
+    }
+    
+}
