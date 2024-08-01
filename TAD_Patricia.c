@@ -36,7 +36,6 @@ InvertedIndexPatricia* createInvertedIndexPatricia(int idDoc, int qtde) {
 void insertInvertedIndexPatricia(PatriciaNode *node, int idDoc, int qtde) {
     InvertedIndexPatricia *new = createInvertedIndexPatricia(idDoc, qtde);
     InvertedIndexPatricia *current = node->InvertedIndexPatriciaRoot;
-
     if (current == NULL) {
         node->InvertedIndexPatriciaRoot = new;
     } else {
@@ -129,6 +128,24 @@ void freePatricia(PatriciaNode *root) {
     freePatricia(root->right);
     free(root->key);
     free(root);
+}
+
+int countDocumentsWithTerm(PatriciaNode *node) {
+    if (node == NULL || node->InvertedIndexPatriciaRoot == NULL) {
+        return 0;
+    }
+
+    int count = 0;
+    InvertedIndexPatricia *aux = node->InvertedIndexPatriciaRoot;
+
+    while (aux != NULL) {
+        if (aux->qtde > 0) {  // Verifica se o termo aparece no documento
+            count++;
+        }
+        aux = aux->nextInvertedIndexPatricia;
+    }
+
+    return count;
 }
 
 /*int main() {

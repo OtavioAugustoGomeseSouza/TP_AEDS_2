@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 void menu(char *nomeArquivo, SearchType *searchType) {
     char ingrediente[100];
@@ -38,21 +39,22 @@ void menu(char *nomeArquivo, SearchType *searchType) {
                 }
                 break;
             case 4:
-                //printf("Digite quantos termo deseja buscar\n");
-                //opcao2 = getInt();
-                //TermoBusca termoBusca[opcao2];
-                //for (int i = 0; i < opcao2; i++){
-                  //  printf("Digite o nome do termo que deseja buscar\n");
-                    //scanf("%s", termoBusca[i].ingrediente);
-                //}
-                //buscar(searchType, ingrediente);
+                printf("Digite quantos termo deseja buscar\n");
+                opcao2 = getInt();
+                TermoBusca termoBusca[opcao2];
+                for (int i = 0; i < opcao2; i++){
+                    printf("Digite o nome do termo que deseja buscar\n");
+                    scanf("%s", termoBusca[i].ingrediente);
+                }
+                CalculodeRelevancia(searchType, termoBusca, opcao2);
                 break;
-            case 5:
+            /*case 5:
                 printf("Saindo...\n");
                 break;
             default:
                 printf("Opcao invalida\n");
                 break;
+            */
         }
     }
 }
@@ -63,24 +65,47 @@ int getInt() {
     return num;
 }
 
-void CalculodeRelevancia(SearchType *searchType, TermoBusca *termoBusca, int numTermos){
-    int i=0;
-    while(termoBusca[i].ingrediente != NULL){
-        PatriciaNode* NoAtual = searchPatricia(searchType->root, termoBusca[i].ingrediente);
-        if( NoAtual != NULL){
-            
+void CalculodeRelevancia(SearchType *searchType, TermoBusca *termoBusca, int numTermos) {
+    int i = 0;
+    RelevanciaWi *w = malloc(searchType->numArq * sizeof(RelevanciaWi));
+    if (w == NULL) {
+        fprintf(stderr, "Erro ao alocar memória para RelevanciaWi\n");
+        exit(1);
+    }
 
+    // Inicializa a estrutura w com valores default
+    for (int j = 0; j < searchType->numArq; j++) {
+        w[j].idDoc = -1;  // Valor default indicando que não foi encontrado
+        w[j].wi = 0.0;
+    }
+
+    while (termoBusca[i].ingrediente != NULL || i < numTermos) {
+        // Procura o nó da árvore Patricia que contém o termo atual
+        PatriciaNode* NoAtual = searchPatricia(searchType->root, termoBusca[i].ingrediente);
+        if (NoAtual != NULL && NoAtual->InvertedIndexPatriciaRoot != NULL) {
+            // Percorre a lista encadeada de índices invertidos
+            InvertedIndexPatricia *current = NoAtual->InvertedIndexPatriciaRoot;
+            int index = 0;
+            int totalDocs = searchType->numArq;
+            int numDocsWithTerm = countDocumentsWithTerm(NoAtual);
+            while (index < numDocsWithTerm) {
+                // Calcula a relevância para cada documento na lista encadeada
+                
+                w[index].idDoc = current->idDoc;
+                w[index].wi = (current->qtde) * (log2(totalDocs) / numDocsWithTerm);
+                printf("%i\n",w[index].idDoc);
+                printf("%i\n",current->qtde);
+                // Impressão para depuração
+                printf("Quantidade: %d\nTotal Docs: %d\nDocs com Termo: %d\n", current->qtde, totalDocs, numDocsWithTerm);
+                printf("Relevância para o documento %d: %f\n", w[index].idDoc, w[index].wi);
+
+                current = current->nextInvertedIndexPatricia;
+                index++;
+            }
         }
         i++;
     }
 
-    for (int i = 0; i < numTermos; i++)
-    {
-        for (int j = 0; j < searchType->numArq; j++)
-        {
-            
-        }
-        
-    }
-    
+    // Liberar memória alocada
+    free(w);
 }

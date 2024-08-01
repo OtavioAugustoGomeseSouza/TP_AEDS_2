@@ -33,6 +33,7 @@ void insertInvertedIndexPatricia(PatriciaNode *node, int idDoc, int qtde);
 
 void printPatricia(PatriciaNode *root);
 
+int countDocumentsWithTerm(PatriciaNode *node);
 
 
 #endif
