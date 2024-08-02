@@ -7,7 +7,6 @@
 //gcc -Wall -Wextra -g3 TAD_TabelaHash.c TAD_Patricia.c Main.c -o output/Main.exe
 //mingw32-make
 // .\exec.exe
-
 /*
  como compilar
  
@@ -22,8 +21,6 @@
   para sair de uma pasta use o comando cd ..
 
 */
-
-
 /*void toLowerCase(char *str) {
     for (int i = 0; str[i]; i++) {
         str[i] = tolower((unsigned char)str[i]);
