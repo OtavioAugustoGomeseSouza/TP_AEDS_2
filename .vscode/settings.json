@@ -2,6 +2,8 @@
     "files.associations": {
         "tad_tabelahash.h": "c",
         "time.h": "c",
-        "tad_arquivo.h": "c"
+        "tad_arquivo.h": "c",
+        "TAD_Relevancia.C": "cpp",
+        "tad_menu.h": "c"
     }
 }

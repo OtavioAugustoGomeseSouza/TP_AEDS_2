@@ -9,10 +9,20 @@ typedef struct {
     int idDoc;
 }RelevanciaWi;
 
+typedef struct {
+    RelevanciaWi *w;
+    double soma;
+} SomatorioWi;
+
+typedef struct {
+    SomatorioWi *s;
+    double ri;
+} RelevanciaRi;
+
 void menu(char *nomeArquivo, SearchType *searchType);
 
 int getInt();
 
-void CalculodeRelevancia(SearchType *searchType, TermoBusca *termoBusca, int numTermos);
+void CalculodeWi(SearchType *searchType, TermoBusca *termoBusca, int numTermos);
 
 //void buscar(SearchType *searchType, char *ingrediente);
