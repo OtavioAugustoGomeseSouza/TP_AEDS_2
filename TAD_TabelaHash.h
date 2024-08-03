@@ -1,6 +1,6 @@
 #ifndef TAD_TABELAHASH_H
 #define TAD_TABELAHASH_H
-
+#include <time.h>
 
 #define HASH_SIZE 100  // Tamanho da tabela hash
 #define N 100  // Número de pesos
@@ -51,5 +51,7 @@ void freeHashTable(HashTable *hashTable);
 TipoPesos* GeraPesos();
 
 void printHashTable(HashTable *hashTable);
+
+int countDocumentsWithTermHash(HashNode *node);
 
 #endif

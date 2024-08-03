@@ -1,6 +1,6 @@
 #ifndef TAD_PATRICIA_H
 #define TAD_PATRICIA_H
-
+#include <time.h>
 
 typedef struct {
 	int idDoc;
@@ -14,7 +14,7 @@ typedef struct PatriciaNode {
     struct PatriciaNode *right;
     InvertedIndexPatricia *InvertedIndexPatriciaRoot;
     int bit;  // Pode ser usado como uma flag
-    int seeking_count;
+    long long seeking_count;
 } PatriciaNode;
 
 
@@ -34,7 +34,7 @@ void insertInvertedIndexPatricia(PatriciaNode *node, int idDoc, int qtde);
 
 void printPatricia(PatriciaNode *root);
 
-int countDocumentsWithTerm(PatriciaNode *node);
+int countDocumentsWithTermPatricia(PatriciaNode *node);
 
 
 #endif

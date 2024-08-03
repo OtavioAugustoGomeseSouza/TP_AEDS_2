@@ -4,63 +4,66 @@
 #include <string.h>
 #include <math.h>
 
-// Função para ler um número inteiro com verificação de erros
+//Função para ler os inteiros do menu
 int getInt() {
     int num;
     if (scanf("%d", &num) != 1) {
-        // Limpa o buffer de entrada se a leitura falhar
+        //Como estava dando Bug, fiz isso para limpar buffer
         while (getchar() != '\n');
-        num = -1; // Valor inválido
+        num = -1;
     }
     return num;
 }
 
-// Função para calcular a relevância dos documentos com base nos termos de busca
-void CalculodeWi(SearchType *searchType, TermoBusca *termoBusca, int numTermos) {
-    // Aloca memória para armazenar a relevância de cada documento
+//Função para Calcular a Arvore Patricia
+void CalculodeRelevanciaPatricia(SearchType *searchType, TermoBusca *termoBusca, int numTermos, FileType *ListaArquivos) {
+    //Alocar Memoria
     RelevanciaWi *w = malloc(searchType->numArq * sizeof(RelevanciaWi));
     RelevanciaRi *r = malloc(searchType->numArq * sizeof(RelevanciaRi));
-    SomatorioWi *s = calloc(searchType->numArq, sizeof(SomatorioWi)); // Inicializa s com zeros
+    //Como s é um somatorio, calloc inicia a memoria com zero
+    SomatorioWi *s = calloc(searchType->numArq, sizeof(SomatorioWi));
 
     if (w == NULL || r == NULL || s == NULL) {
         fprintf(stderr, "Erro ao alocar memória.\n");
         exit(1);
     }
 
-    // Inicializa a estrutura w e s com valores padrão
+    //Iniciar a Estruturas
     for (int j = 0; j < searchType->numArq; j++) {
         w[j].idDoc = -1;
         w[j].wi = 0.0;
         s[j].soma = 0.0;
     }
 
-    // Itera sobre cada termo de busca
+    //Calculo de cada termo de busca
     for (int i = 0; i < numTermos; i++) {
         PatriciaNode* noAtual = searchPatricia(searchType->root, termoBusca[i].ingrediente);
         if (noAtual != NULL && noAtual->InvertedIndexPatriciaRoot != NULL) {
-            // Conta o número de documentos contendo o termo
-            int numDocsWithTerm = countDocumentsWithTerm(noAtual);
+            //Conta o total de arq q tem o termo
+            int numDocsWithTerm = countDocumentsWithTermPatricia(noAtual);
             InvertedIndexPatricia *current = noAtual->InvertedIndexPatriciaRoot;
             int totalDocs = searchType->numArq;
 
             while (current != NULL) {
-                // Calcula o peso do termo no documento
+                //Calculo do W(i)
                 double peso = current->qtde * log2((double)totalDocs) / numDocsWithTerm;
                 
-                // Armazena o peso no vetor w e atualiza o somatório
+                //Armazena o W(i) e ++no somatorio
                 int docIndex = current->idDoc;
                 if (docIndex >= 0 && docIndex < searchType->numArq) {
                     w[docIndex].idDoc = docIndex;
                     w[docIndex].wi = peso;
-                    s[docIndex].soma += peso; // Adiciona o peso ao somatório do documento
+                    s[docIndex].soma += peso;
                 }
+                /*Prints para teste do valor de W(i)
                 printf("Termo: %s\n", termoBusca[i].ingrediente);
                 printf("Documento: %d\n", w[docIndex].idDoc);
                 printf("Quantidade no documento: %d\n", current->qtde);
                 printf("Total de documentos: %d\n", totalDocs);
                 printf("Número de documentos com o termo: %d\n", numDocsWithTerm);
                 printf("Peso calculado: %.2f\n", peso);
-                // Avança para o próximo índice invertido
+                */
+                //Avança na lista encadeada
                 current = current->nextInvertedIndexPatricia;
             }
         } else {
@@ -68,22 +71,146 @@ void CalculodeWi(SearchType *searchType, TermoBusca *termoBusca, int numTermos) 
         }
     }
 
+    //Parte para calculo da R(i) de cada doc
+    int contador=0; //Para saber qntas R(i) é != 0
     for (int x = 0; x < searchType->numArq; x++) {
-        int ni = searchType->numArq; // Assuming this function exists
-        if (ni > 0) {
+        int ni = ListaArquivos[x].ni;
+        if (searchType->numArq > 0) {
             r[x].ri = (1.0 / ni) * s[x].soma;
-            printf("Relevância total para o documento %d: %.2f\n", x, r[x].ri);
+            //printf("Relevância total para o documento %d: %.2f\n", x, r[x].ri);
+            if(r[x].ri>0.0){
+                contador++;
+            }
         }
     }
 
-    // Libera a memória alocada
+    //Parte q determina a ordem do mais relevante
+    float vetMaior[contador];
+    int idArqMaiorRelev[contador];
+    int idMaior;
+    for (int i = 0; i < contador; i++) {
+        float maiorRelev = 0.0;
+        for (int x = 0; x < searchType->numArq; x++) {
+            if (r[x].ri > 0.0 && r[x].ri > maiorRelev) {
+                maiorRelev = r[x].ri;
+                idMaior = x;
+            }
+        }
+        vetMaior[i] = maiorRelev;
+        idArqMaiorRelev[i] = idMaior;
+        r[idMaior].ri = 0.0;
+    
+    }
+
+    //parte para printar os mais relevantes
+    for (int i = 0; i < contador; i++) {
+        printf("Texto %i (arquivo%i.txt)\n",idArqMaiorRelev[i]+1,idArqMaiorRelev[i]+1);
+    }
+
+    //Libera a memória
+    free(w);
+    free(r);
+    free(s);
+}
+
+//Calcular a Relevancia da Tabela Hash
+void CalculodeRelevanciaHash(SearchType *searchType, TermoBusca *termoBusca, int numTermos, FileType *ListaArquivos) {
+    //Aloca memória
+    RelevanciaWi *w = malloc(searchType->numArq * sizeof(RelevanciaWi));
+    RelevanciaRi *r = malloc(searchType->numArq * sizeof(RelevanciaRi));
+    SomatorioWi *s = calloc(searchType->numArq, sizeof(SomatorioWi));
+
+    if (w == NULL || r == NULL || s == NULL) {
+        fprintf(stderr, "Erro ao alocar memória.\n");
+        exit(1);
+    }
+
+    //Iniciar a Estruturas
+    for (int j = 0; j < searchType->numArq; j++) {
+        w[j].idDoc = -1;
+        w[j].wi = 0.0;
+        s[j].soma = 0.0;
+    }
+
+    //calculo de cada termo de busca
+    for (int i = 0; i < numTermos; i++) {
+        HashNode* noAtual = searchHash(&searchType->hashTable, termoBusca[i].ingrediente);
+        if (noAtual != NULL && noAtual->invertedIndexRoot != NULL) {
+            //Conta qntos arq tem o termo
+            int numDocsWithTerm = countDocumentsWithTermHash(noAtual);
+            InvertedIndex *current = noAtual->invertedIndexRoot;
+            int totalDocs = searchType->numArq;
+
+            while (current != NULL) {
+                //Calcula o W(i)
+                double peso = current->qtde * log2((double)totalDocs) / numDocsWithTerm;
+                
+                //Armazena os W(i) e ++somatorio
+                int docIndex = current->idDoc;
+                if (docIndex >= 0 && docIndex < searchType->numArq) {
+                    w[docIndex].idDoc = docIndex;
+                    w[docIndex].wi = peso;
+                    s[docIndex].soma += peso;
+                }
+                /*Prints para teste
+                printf("Termo: %s\n", termoBusca[i].ingrediente);
+                printf("Documento: %d\n", w[docIndex].idDoc);
+                printf("Quantidade no documento: %d\n", current->qtde);
+                printf("Total de documentos: %d\n", totalDocs);
+                printf("Número de documentos com o termo: %d\n", numDocsWithTerm);
+                printf("Peso calculado: %.2f\n", peso);
+                */
+                //continua na lista encadeada
+                current = current->nextInvertedIndex;
+            }
+        } else {
+            printf("Termo '%s' não encontrado.\n", termoBusca[i].ingrediente);
+        }
+    }
+
+    int contador=0;
+    for (int x = 0; x < searchType->numArq; x++) {
+        int ni = ListaArquivos[x].ni;
+        if (searchType->numArq > 0) {
+            r[x].ri = (1.0 / ni) * s[x].soma;
+            //printf("Relevância total para o documento %d: %.2f\n", x, r[x].ri);
+            if(r[x].ri>0.0){
+                contador++;
+            }
+        }
+    }
+
+    //Parte para colocar em ordem os mais relevantes
+    float vetMaior[contador];
+    int idArqMaiorRelev[contador];
+    int idMaior;
+    for (int i = 0; i < contador; i++) {
+        float maiorRelev = 0.0;
+        for (int x = 0; x < searchType->numArq; x++) {
+            if (r[x].ri > 0.0 && r[x].ri > maiorRelev) {
+                maiorRelev = r[x].ri;
+                idMaior = x;
+            }
+        }
+        vetMaior[i] = maiorRelev;
+        idArqMaiorRelev[i] = idMaior;
+        r[idMaior].ri = 0.0;
+    
+    }
+
+    //Parte para printar os mais relevantes em ordem
+    for (int i = 0; i < contador; i++) {
+        printf("Texto %i (arquivo%i.txt)\n",idArqMaiorRelev[i]+1,idArqMaiorRelev[i]+1);
+    }
+
+    //Libera a memória
     free(w);
     free(r);
     free(s);
 }
 
 void readTermosBusca(TermoBusca *termoBusca, int numTermos) {
-    // Limpa o buffer de entrada
+    //Limpa o buffer de entrada
     while (getchar() != '\n');
     
     for (int i = 0; i < numTermos; i++) {
@@ -146,7 +273,8 @@ void menu(char *nomeArquivo, SearchType *searchType) {
                 }
 
                 readTermosBusca(termoBusca, numTermos); // Lê os termos compostos
-                CalculodeWi(searchType, termoBusca, numTermos);
+                CalculodeRelevanciaPatricia(searchType, termoBusca, numTermos, ListaArquivos);
+                CalculodeRelevanciaHash(searchType, termoBusca, numTermos, ListaArquivos);
                 free(termoBusca);
                 break;
             case 5:

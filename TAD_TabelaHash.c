@@ -19,7 +19,7 @@ void initHashTable(HashTable *hashTable) {
 
 // Função de hash simples
 unsigned int hash_function(char *key, TipoPesos *p) {
-    //printf("entrou na função hash_function\n");
+    //printf("entrou na função hash_function\n");   
     unsigned int hash = 0;
     for (int i = 0; key[i] != '\0'; i++) {
         hash = hash + key[i] * (*p)[i];
@@ -207,6 +207,24 @@ void printHashTable(HashTable *hashTable){
 
     // Liberar memória alocada para o array de chaves
     free(keys);  
+}
+
+int countDocumentsWithTermHash(HashNode *node) {
+    if (node == NULL || node->invertedIndexRoot == NULL) {
+        return 0;
+    }
+
+    int count = 0;
+    InvertedIndex *aux = node->invertedIndexRoot;
+
+    while (aux != NULL) {
+        if (aux->qtde > 0) {  // Verifica se o termo aparece no documento
+            count++;
+        }
+        aux = aux->nextInvertedIndex;
+    }
+
+    return count;
 }
 
 /*int main() {

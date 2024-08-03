@@ -108,17 +108,20 @@ PatriciaNode* insertPatricia(PatriciaNode *root, char *key) {
 // Procura por uma chave na árvore
 PatriciaNode* searchPatricia(PatriciaNode *root, char *key) {
     PatriciaNode *current = root;
+    long seeking_count = 0;
     while (current) {
         //colisoes de busca
-        current->seeking_count++;
+        seeking_count++;
         if (strcmp(key, current->key) < 0) {
             current = current->left;
         } else if (strcmp(key, current->key) > 0) {
             current = current->right;
         } else {
+            current->seeking_count = seeking_count;
             return current;
         }
     }
+    
 
     return NULL;
 }
@@ -135,7 +138,7 @@ void freePatricia(PatriciaNode *root) {
     free(root);
 }
 
-int countDocumentsWithTerm(PatriciaNode *node) {
+int countDocumentsWithTermPatricia(PatriciaNode *node) {
     if (node == NULL || node->InvertedIndexPatriciaRoot == NULL) {
         return 0;
     }
@@ -152,6 +155,8 @@ int countDocumentsWithTerm(PatriciaNode *node) {
 
     return count;
 }
+
+
 
 /*int main() {
     PatriciaNode *root = NULL;
