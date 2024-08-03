@@ -8,6 +8,8 @@ void printPatricia(PatriciaNode *root) {
         return;
     }
 
+    printPatricia(root->left);
+
     // Imprime a chave do nó atual
     printf("Key: %s ->", root->key);
     printf(" (Seeking: %d)", root->seeking_count);
@@ -21,7 +23,7 @@ void printPatricia(PatriciaNode *root) {
             printf("\n");
 
     // Chama recursivamente para os filhos esquerdo e direito
-    printPatricia(root->left);
+    
     printPatricia(root->right);
 }
 
