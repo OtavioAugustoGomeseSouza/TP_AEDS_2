@@ -1,7 +1,4 @@
 #include "TAD_Patricia.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 void printPatricia(PatriciaNode *root) {
     if (!root) {

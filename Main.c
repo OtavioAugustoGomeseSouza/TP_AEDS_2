@@ -4,6 +4,8 @@
 #include "TAD_Patricia.h"
 #include "TAD_Menu.h"
 
+
+
 //gcc -Wall -Wextra -g3 TAD_TabelaHash.c TAD_Patricia.c Main.c -o output/Main.exe
 //mingw32-make
 // .\exec.exe

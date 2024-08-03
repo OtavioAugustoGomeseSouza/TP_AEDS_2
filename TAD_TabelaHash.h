@@ -1,5 +1,9 @@
 #ifndef TAD_TABELAHASH_H
 #define TAD_TABELAHASH_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/time.h>
 #include <time.h>
 
 #define HASH_SIZE 100  // Tamanho da tabela hash

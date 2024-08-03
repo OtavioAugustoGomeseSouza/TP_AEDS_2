@@ -2,7 +2,7 @@
 #define TAD_ARQUIVO_H
 #include "TAD_TabelaHash.h"
 #include "TAD_Patricia.h"
-
+#include <ctype.h>
 
 typedef struct {
     char fileName[256];

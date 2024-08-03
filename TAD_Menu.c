@@ -15,8 +15,8 @@ int getInt() {
     return num;
 }
 
-//Função para Calcular a Arvore Patricia
-void CalculodeRelevanciaPatricia(SearchType *searchType, TermoBusca *termoBusca, int numTermos, FileType *ListaArquivos) {
+//Calcular W(i) Arvore Patricia
+void CalculodeWiPatricia(SearchType *searchType, TermoBusca *termoBusca, int numTermos, FileType *ListaArquivos) {
     //Alocar Memoria
     RelevanciaWi *w = malloc(searchType->numArq * sizeof(RelevanciaWi));
     RelevanciaRi *r = malloc(searchType->numArq * sizeof(RelevanciaRi));
@@ -28,7 +28,7 @@ void CalculodeRelevanciaPatricia(SearchType *searchType, TermoBusca *termoBusca,
         exit(1);
     }
 
-    //Iniciar a Estruturas
+    //Iniciar as Estruturas
     for (int j = 0; j < searchType->numArq; j++) {
         w[j].idDoc = -1;
         w[j].wi = 0.0;
@@ -70,51 +70,13 @@ void CalculodeRelevanciaPatricia(SearchType *searchType, TermoBusca *termoBusca,
             printf("Termo '%s' não encontrado.\n", termoBusca[i].ingrediente);
         }
     }
-
-    //Parte para calculo da R(i) de cada doc
-    int contador=0; //Para saber qntas R(i) é != 0
-    for (int x = 0; x < searchType->numArq; x++) {
-        int ni = ListaArquivos[x].ni;
-        if (searchType->numArq > 0) {
-            r[x].ri = (1.0 / ni) * s[x].soma;
-            //printf("Relevância total para o documento %d: %.2f\n", x, r[x].ri);
-            if(r[x].ri>0.0){
-                contador++;
-            }
-        }
-    }
-
-    //Parte q determina a ordem do mais relevante
-    float vetMaior[contador];
-    int idArqMaiorRelev[contador];
-    int idMaior;
-    for (int i = 0; i < contador; i++) {
-        float maiorRelev = 0.0;
-        for (int x = 0; x < searchType->numArq; x++) {
-            if (r[x].ri > 0.0 && r[x].ri > maiorRelev) {
-                maiorRelev = r[x].ri;
-                idMaior = x;
-            }
-        }
-        vetMaior[i] = maiorRelev;
-        idArqMaiorRelev[i] = idMaior;
-        r[idMaior].ri = 0.0;
-    
-    }
-
-    //parte para printar os mais relevantes
-    for (int i = 0; i < contador; i++) {
-        printf("Texto %i (arquivo%i.txt)\n",idArqMaiorRelev[i]+1,idArqMaiorRelev[i]+1);
-    }
-
-    //Libera a memória
+    printf("Calculando a Relevancia Arvore Patricia\n");
+    CalculoRelevancia(searchType, r, s, ListaArquivos);
     free(w);
-    free(r);
-    free(s);
 }
 
-//Calcular a Relevancia da Tabela Hash
-void CalculodeRelevanciaHash(SearchType *searchType, TermoBusca *termoBusca, int numTermos, FileType *ListaArquivos) {
+//Calcular do W(i) da Tabela Hash
+void CalculodeWiHash(SearchType *searchType, TermoBusca *termoBusca, int numTermos, FileType *ListaArquivos) {
     //Aloca memória
     RelevanciaWi *w = malloc(searchType->numArq * sizeof(RelevanciaWi));
     RelevanciaRi *r = malloc(searchType->numArq * sizeof(RelevanciaRi));
@@ -167,8 +129,15 @@ void CalculodeRelevanciaHash(SearchType *searchType, TermoBusca *termoBusca, int
             printf("Termo '%s' não encontrado.\n", termoBusca[i].ingrediente);
         }
     }
+    printf("Calculando a Relevancia Tabela Hash\n");
+    CalculoRelevancia(searchType, r, s, ListaArquivos);
+    free(w);
+}
 
-    int contador=0;
+//Calcular a Relevancia
+void CalculoRelevancia(SearchType *searchType, RelevanciaRi *r, SomatorioWi *s, FileType *ListaArquivos) {
+    //Parte para calculo da R(i) de cada doc
+    int contador=0; //Para saber qntas R(i) é != 0
     for (int x = 0; x < searchType->numArq; x++) {
         int ni = ListaArquivos[x].ni;
         if (searchType->numArq > 0) {
@@ -180,7 +149,7 @@ void CalculodeRelevanciaHash(SearchType *searchType, TermoBusca *termoBusca, int
         }
     }
 
-    //Parte para colocar em ordem os mais relevantes
+    //Parte q determina a ordem do mais relevante
     float vetMaior[contador];
     int idArqMaiorRelev[contador];
     int idMaior;
@@ -198,13 +167,13 @@ void CalculodeRelevanciaHash(SearchType *searchType, TermoBusca *termoBusca, int
     
     }
 
-    //Parte para printar os mais relevantes em ordem
+    //parte para printar os mais relevantes
     for (int i = 0; i < contador; i++) {
         printf("Texto %i (arquivo%i.txt)\n",idArqMaiorRelev[i]+1,idArqMaiorRelev[i]+1);
     }
 
     //Libera a memória
-    free(w);
+
     free(r);
     free(s);
 }
@@ -271,10 +240,9 @@ void menu(char *nomeArquivo, SearchType *searchType) {
                     fprintf(stderr, "Erro ao alocar memória para TermoBusca\n");
                     exit(1);
                 }
-
-                readTermosBusca(termoBusca, numTermos); // Lê os termos compostos
-                CalculodeRelevanciaPatricia(searchType, termoBusca, numTermos, ListaArquivos);
-                CalculodeRelevanciaHash(searchType, termoBusca, numTermos, ListaArquivos);
+                readTermosBusca(termoBusca, numTermos);
+                CalculodeWiPatricia(searchType, termoBusca, numTermos, ListaArquivos);
+                CalculodeWiHash(searchType, termoBusca, numTermos, ListaArquivos);
                 free(termoBusca);
                 break;
             case 5:

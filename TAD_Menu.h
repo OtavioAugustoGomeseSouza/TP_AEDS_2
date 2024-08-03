@@ -23,8 +23,10 @@ void menu(char *nomeArquivo, SearchType *searchType);
 
 int getInt();
 
-void CalculodeRelevanciaPatricia(SearchType *searchType, TermoBusca *termoBusca, int numTermos, FileType *ListaArquivos);
+void CalculodeWiPatricia(SearchType *searchType, TermoBusca *termoBusca, int numTermos, FileType *ListaArquivos);
 
-void CalculodeRelevanciaHash(SearchType *searchType, TermoBusca *termoBusca, int numTermos, FileType *ListaArquivos);
+void CalculodeWiHash(SearchType *searchType, TermoBusca *termoBusca, int numTermos, FileType *ListaArquivos);
+
+void CalculoRelevancia(SearchType *searchType, RelevanciaRi *r, SomatorioWi *s, FileType *ListaArquivos);
 
 //void buscar(SearchType *searchType, char *ingrediente);
