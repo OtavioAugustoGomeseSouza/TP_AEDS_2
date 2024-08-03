@@ -1,6 +1,5 @@
 #ifndef TAD_PATRICIA_H
 #define TAD_PATRICIA_H
-#include <time.h>
 
 typedef struct {
 	int idDoc;

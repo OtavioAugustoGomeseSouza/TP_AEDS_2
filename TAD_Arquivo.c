@@ -64,7 +64,8 @@ void readAllFiles(const char *fileName, FileType* files ,SearchType *searchType)
     }
     
     free(files);
-    
+    printf("Tempo Tabela Hash: %.4f segundos\n", searchType->hashTable.tempo);
+    printf("Tempo Patricia: %.4f segundos\n", searchType->root->tempo);
 
 }
 

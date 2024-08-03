@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 void printPatricia(PatriciaNode *root) {
     if (!root) {
         return;
@@ -65,40 +66,41 @@ PatriciaNode* createNode(char *key) {
     node->right = NULL;
     node->InvertedIndexPatriciaRoot = NULL;
     node->bit = 0;  // Pode ser usado como uma flag para indicar se é folha
+    node->tempo = 0.0;
     return node;
 }
 
 
 // Insere uma chave na árvore
 PatriciaNode* insertPatricia(PatriciaNode *root, char *key) {
+
     if (!root) {
-        return createNode(key);
-    }
-
-    PatriciaNode *current = root;
-    PatriciaNode *parent = NULL;
-
-    // Percorre a árvore até encontrar a posição de inserção
-    while (current) {
-        parent = current;
-        if (strcmp(key, current->key) < 0) {
-            current = current->left;
-        } else if (strcmp(key, current->key) > 0) {
-            current = current->right;
-        } else {
-            // A chave já existe
-            return root;
-        }
-    }
-
-    // Cria o novo nó
-    PatriciaNode *newNode = createNode(key);
-
-    // Insere o novo nó na árvore
-    if (strcmp(key, parent->key) < 0) {
-        parent->left = newNode;
+        root = createNode(key);
     } else {
-        parent->right = newNode;
+        PatriciaNode *current = root;
+        PatriciaNode *parent = NULL;
+
+        // Percorre a árvore até encontrar a posição de inserção
+        while (current) {
+            parent = current;
+            if (strcmp(key, current->key) < 0) {
+                current = current->left;
+            } else if (strcmp(key, current->key) > 0) {
+                current = current->right;
+            } else {
+                return root;
+            }
+        }
+
+        // Cria o novo nó
+        PatriciaNode *newNode = createNode(key);
+
+        // Insere o novo nó na árvore
+        if (strcmp(key, parent->key) < 0) {
+            parent->left = newNode;
+        } else {
+            parent->right = newNode;
+        }
     }
 
     return root;

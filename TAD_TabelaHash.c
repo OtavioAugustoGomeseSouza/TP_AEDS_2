@@ -15,6 +15,7 @@ void initHashTable(HashTable *hashTable) {
         hashTable->tableRoot[i] = NULL;
     }
     hashTable->p = GeraPesos();
+    hashTable->tempo = 0.0;
 }
 
 // Função de hash simples
@@ -37,6 +38,7 @@ HashNode* createHashNode(char *key) {
         node->invertedIndexRoot = NULL;
         node->nextHashNode = NULL;
         node->hashValue = 0;
+        node->colisoes = 0;
     }
     return node;
 }
@@ -80,8 +82,6 @@ InvertedIndex* searchInvertedIndex(HashNode *node, int idDoc) {
 // Inserção na tabela hash
 void insertHash(HashTable *hashTable, char *key, int idDoc) {
     //printf("entrou na função inserir hash\n");
-
-    
     unsigned int hash = hash_function(key, hashTable->p);
     //printf("saiu da função hash_function\n");
     HashNode *currentHashNode = hashTable->tableRoot[hash];
@@ -109,23 +109,22 @@ void insertHash(HashTable *hashTable, char *key, int idDoc) {
     //printf("apontando para o primeiro nó hash\n");
     hashTable->tableRoot[hash] = newNode;
     //insertInvertedIndex(newNode, idDoc, 1);
-    
 }
 
 // Busca na tabela hash
 HashNode* searchHash(HashTable *hashTable, char *key) {
     unsigned int hash = hash_function(key, hashTable->p);
     HashNode *current = hashTable->tableRoot[hash];
-    int colisoes=0;
+    long long colisoes=0;
     while (current != NULL) {
         if (strcmp(current->key, key) == 0) {
             return current;
         }
-        current = current->nextHashNode;
         //contador de colisoes
         colisoes++;
         //atualiza o campo de colisões
         current->colisoes = colisoes;
+        current = current->nextHashNode;
     }
     
     return NULL;

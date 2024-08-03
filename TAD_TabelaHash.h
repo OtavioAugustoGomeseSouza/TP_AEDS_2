@@ -1,6 +1,6 @@
 #ifndef TAD_TABELAHASH_H
 #define TAD_TABELAHASH_H
-#include <time.h>
+
 
 #define HASH_SIZE 100  // Tamanho da tabela hash
 #define N 100  // Número de pesos
@@ -21,7 +21,7 @@ typedef struct HashNode {
     int hashValue;
     InvertedIndex *invertedIndexRoot; //aponta horizontalmente para o primeiro elemento da lista invertida
     struct HashNode *nextHashNode;
-    int colisoes;
+    long long colisoes;
 } HashNode;
 
 // Estrutura para a tabela hash 
