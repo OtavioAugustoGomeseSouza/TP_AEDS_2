@@ -222,26 +222,3 @@ int countDocumentsWithTermHash(HashNode *node) {
     return count;
 }
 
-/*int main() {
-    // Exemplo de uso da tabela hash
-    HashTable hashTable;
-    memset(&hashTable, 0, sizeof(HashTable));
-
-    GeraPesos(hashTable.p);
-
-    insertHash(&hashTable, "apple");
-    insertHash(&hashTable, "banana");
-    insertHash(&hashTable, "orange");
-
-    HashNode *result = searchHash(&hashTable, "banana");
-    if (result) {
-    printf("Found 'banana' with key: %s\n", result->key);
-    } else {
-        printf("'banana' not found\n");
-    }
-
-
-    freeHashTable(&hashTable);
-
-    return 0;
-}*/
