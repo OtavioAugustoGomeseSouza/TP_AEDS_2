@@ -15,7 +15,7 @@ typedef struct {
 typedef struct {
     int numArq;
     HashTable hashTable;
-    PatriciaNode *root;
+    TipoArvore root;
 } SearchType;
 
 

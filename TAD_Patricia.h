@@ -1,32 +1,47 @@
 #ifndef TAD_PATRICIA_H
 #define TAD_PATRICIA_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+
+#define D 8   /* depende de TipoChave */
 
 typedef struct InvertedIndexPatricia {
     int idDoc;
     int qtde;
-    struct InvertedIndexPatricia *next;
+    struct InvertedIndexPatricia *nextInvertedIndexPatricia;
 } InvertedIndexPatricia;
 
-typedef struct PatriciaNode {
-    char *key;  // A chave armazenada no nó (prefixo)
-    struct PatriciaNode *left;  // Filho à esquerda
-    struct PatriciaNode *right; // Filho à direita
-    InvertedIndexPatricia *InvertedIndexPatriciaRoot; // Lista de índices invertidos
-    long long seeking_count; // Contador de buscas
-} PatriciaNode;
+typedef char* TipoChave; /* a definir, dependendo da aplicacao */
+typedef unsigned int TipoIndexAmp;
+typedef unsigned char TipoDib;
+typedef enum {
+    Interno, Externo
+} TipoNo;
 
-// Funções para a árvore Patricia
-PatriciaNode* createNode(char *key);
-PatriciaNode* insertPatricia(PatriciaNode *root, char *key);
-PatriciaNode* searchPatricia(PatriciaNode *root, char *key);
-void freePatricia(PatriciaNode *root);
-void insertInvertedIndexPatricia(PatriciaNode *node, int idDoc, int qtde);
+typedef struct TipoPatNo* TipoArvore;
+typedef struct TipoPatNo {
+    TipoNo nt;
+    union {
+        struct {
+            TipoIndexAmp Index;
+            char Char_maior;
+            TipoArvore Esq, Dir;
+        } NInterno;
+        TipoChave Chave;
+    } NO;
+    InvertedIndexPatricia *InvertedIndexPatriciaRoot;
+} TipoPatNo;
+
+TipoDib Bit(TipoIndexAmp i, TipoChave k);
+short EExterno(TipoArvore p);
+TipoArvore CriaNoInt(int i,char Char_maior, TipoArvore Esq, TipoArvore Dir);
+TipoArvore CriaNoExt(TipoChave k);
+TipoArvore Pesquisa(TipoChave k, TipoArvore t);
+TipoArvore InsereEntre(TipoChave k, TipoArvore t, int i);
+TipoArvore Insere(TipoChave k, TipoArvore t);
+void ImprimeArvore(TipoArvore t, int nivel);
 InvertedIndexPatricia* createInvertedIndexPatricia(int idDoc, int qtde);
-void printPatricia(PatriciaNode *root);
-int countDocumentsWithTermPatricia(PatriciaNode *node);
+void insertInvertedIndexPatricia(TipoPatNo *node, int idDoc, int qtde);
+void ImprimeArvore(TipoArvore t, int nivel);
+int countDocumentsWithTerm(TipoArvore node);
 
 #endif

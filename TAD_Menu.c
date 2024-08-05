@@ -83,24 +83,26 @@ void CalculodeWiPatricia(SearchType *searchType, TermoBusca *termoBusca, int num
 
     // Calcular W(i) para cada termo de busca
     for (int i = 0; i < numTermos; i++) {
-        PatriciaNode *noAtual = searchPatricia(searchType->root, termoBusca[i].ingrediente);
+        TipoArvore noAtual = Pesquisa(termoBusca[i].ingrediente,searchType->root);
+        //printf("passou da pesquisa\n");
         if (noAtual != NULL && noAtual->InvertedIndexPatriciaRoot != NULL) {
+            //Conta o total de arq q tem o termo
             int numDocsWithTerm = countDocumentsWithTermPatricia(noAtual);
             InvertedIndexPatricia *current = noAtual->InvertedIndexPatriciaRoot;
             int totalDocs = searchType->numArq;
 
             while (current != NULL) {
-                double peso = current->qtde * log2((double)totalDocs)/ numDocsWithTerm;
+                //Calculo do W(i)
+                double peso = current->qtde * log2((double)totalDocs) / numDocsWithTerm;
                 
+                //Armazena o W(i) e ++no somatorio
                 int docIndex = current->idDoc;
                 if (docIndex >= 0 && docIndex < searchType->numArq) {
                     w[docIndex].idDoc = docIndex;
                     w[docIndex].wi = peso;
                     s[docIndex].soma += peso;
-                } else {
-                    fprintf(stderr, "ID do documento fora dos limites: %d\n", docIndex);
                 }
-                /*Prints para teste
+                /*Prints para teste do valor de W(i)
                 printf("Termo: %s\n", termoBusca[i].ingrediente);
                 printf("Documento: %d\n", w[docIndex].idDoc);
                 printf("Quantidade no documento: %d\n", current->qtde);
@@ -108,8 +110,8 @@ void CalculodeWiPatricia(SearchType *searchType, TermoBusca *termoBusca, int num
                 printf("Número de documentos com o termo: %d\n", numDocsWithTerm);
                 printf("Peso calculado: %.2f\n", peso);
                 */
-                // Avança na lista encadeada
-                current = current->next;
+                //Avança na lista encadeada
+                current = current->nextInvertedIndexPatricia;
             }
         } else {
             printf("Termo '%s' não encontrado.\n", termoBusca[i].ingrediente);
@@ -225,7 +227,7 @@ void menu(char *nomeArquivo, SearchType *searchType) {
                 switch (opcao2) {
                     case 1:
                         printf("Árvore Patricia\n");
-                        printPatricia(searchType->root);
+                        ImprimeArvore(searchType->root, 0);
                         break;
                     case 2:
                         printf("Tabela Hash\n");

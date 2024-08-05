@@ -119,7 +119,8 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
         removeLeadingSpaces(tokens[i]);
         removeFinalDot(tokens[i]);
 
-        searchType->root = insertPatricia(searchType->root, tokens[i]);
+         searchType->root = Insere(tokens[i],searchType->root);
+
         insertHash(&searchType->hashTable, tokens[i], fileType->idDoc);
 
         i++;
@@ -135,10 +136,8 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
         int timesAppeared = countOccurrences(Preparo, tokens[j]);
         HashNode *currentHashNode = searchHash(&searchType->hashTable, tokens[j]);
         insertInvertedIndexHash(currentHashNode, fileType->idDoc, timesAppeared);
-        PatriciaNode *node = searchPatricia(searchType->root, tokens[j]);
-        if (node != NULL) {
-            insertInvertedIndexPatricia(node, fileType->idDoc, timesAppeared);
-        }
+        //printf("inseriu %s\n", tokens[j]);
+        insertInvertedIndexPatricia(Pesquisa(tokens[j],searchType->root), fileType->idDoc, timesAppeared);
         free(tokens[j]);  // Corrigido: libera a memória alocada para tokens
     }
 
