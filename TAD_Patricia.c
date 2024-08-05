@@ -57,17 +57,17 @@ TipoArvore Pesquisa(TipoChave k, TipoArvore t)
 {
   if (EExterno(t)) 
   {
-    return t;
-    /*if (strcmp(k, t->NO.Chave) == 0)
+    //return t;
+    if (strcmp(k, t->NO.Chave) == 0)
     {
-        printf("chave encontrada %s\n",k);
+        //printf("chave encontrada %s\n",k);
         return t;
     }
      else{
-        printf("chave %s , chave externo %s\n",k,t->NO.Chave);
-        printf("chave nao encontrada %s\n",k);
+        //printf("chave %s , chave externo %s\n",k,t->NO.Chave);
+        //printf("chave nao encontrada %s\n",k);
         return NULL;
-     }*/
+     }
       
   }
    
@@ -148,7 +148,7 @@ TipoArvore Insere(TipoChave k, TipoArvore t)
 
        //printf("palavra %s k[i]=%c e p->NO.Chave[i]=%c\n",k, k[i], p->NO.Chave[i]);
        //printf("p_ultimo->NO.NInterno.Index=%d , p_ultimo->NO.NInterno.Char_maior=%c\n",p_ultimo->NO.NInterno.Index, p_ultimo->NO.NInterno.Char_maior);
-        if (i >= (int)strlen(k))
+        if (strcoll(k, p->NO.Chave) == 0)
         { 
             //printf("Erro: chave %s já está na árvore\n", k);
             return t; 
