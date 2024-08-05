@@ -6,6 +6,7 @@
         "TAD_Relevancia.C": "cpp",
         "tad_menu.h": "c",
         "stdlib.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "tad_patricia.h": "c"
     }
 }

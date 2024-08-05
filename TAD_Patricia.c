@@ -1,52 +1,6 @@
 #include "TAD_Patricia.h"
 
-void printPatricia(PatriciaNode *root) {
-    if (!root) {
-        return;
-    }
-
-    printPatricia(root->left);
-
-    // Imprime a chave do nó atual
-    printf("Key: %s ->", root->key);
-    printf(" (Seeking: %d)", root->seeking_count);
-
-    InvertedIndexPatricia *currentInvertedIndex = root->InvertedIndexPatriciaRoot;
-
-            while (currentInvertedIndex != NULL) {
-                printf("(Doc: %d, Qtde: %d),", currentInvertedIndex->idDoc, currentInvertedIndex->qtde);
-                currentInvertedIndex = currentInvertedIndex->nextInvertedIndexPatricia;
-            }
-            printf("\n");
-
-    // Chama recursivamente para os filhos esquerdo e direito
-    
-    printPatricia(root->right);
-}
-
-InvertedIndexPatricia* createInvertedIndexPatricia(int idDoc, int qtde) {
-    InvertedIndexPatricia *new = (InvertedIndexPatricia *)malloc(sizeof(InvertedIndexPatricia));
-    new->idDoc = idDoc;
-    new->qtde = qtde;
-    new->nextInvertedIndexPatricia = NULL;
-
-    return new;
-}
-
-void insertInvertedIndexPatricia(PatriciaNode *node, int idDoc, int qtde) {
-    InvertedIndexPatricia *new = createInvertedIndexPatricia(idDoc, qtde);
-    InvertedIndexPatricia *current = node->InvertedIndexPatriciaRoot;
-    if (current == NULL) {
-        node->InvertedIndexPatriciaRoot = new;
-    } else {
-        while (current->nextInvertedIndexPatricia != NULL) {
-            current = current->nextInvertedIndexPatricia;
-        }
-        current->nextInvertedIndexPatricia = new;
-    }
-}
-
-// Cria um novo nó da árvore
+// Cria um novo nó da árvore Patricia
 PatriciaNode* createNode(char *key) {
     PatriciaNode *node = (PatriciaNode *)malloc(sizeof(PatriciaNode));
     if (!node) {
@@ -61,54 +15,49 @@ PatriciaNode* createNode(char *key) {
     node->left = NULL;
     node->right = NULL;
     node->InvertedIndexPatriciaRoot = NULL;
-    node->bit = 0;  // Pode ser usado como uma flag para indicar se é folha
-    //node->tempo = 0.0;
+    node->seeking_count = 0;
     return node;
 }
 
-
-// Insere uma chave na árvore
+// Insere uma chave na árvore Patricia
 PatriciaNode* insertPatricia(PatriciaNode *root, char *key) {
+    if (root == NULL) {
+        return createNode(key);
+    }
 
-    if (!root) {
-        root = createNode(key);
-    } else {
-        PatriciaNode *current = root;
-        PatriciaNode *parent = NULL;
+    PatriciaNode *current = root;
+    PatriciaNode *parent = NULL;
+    PatriciaNode *newNode;
 
-        // Percorre a árvore até encontrar a posição de inserção
-        while (current) {
-            parent = current;
-            if (strcmp(key, current->key) < 0) {
-                current = current->left;
-            } else if (strcmp(key, current->key) > 0) {
-                current = current->right;
-            } else {
-                return root;
-            }
-        }
-
-        // Cria o novo nó
-        PatriciaNode *newNode = createNode(key);
-
-        // Insere o novo nó na árvore
-        if (strcmp(key, parent->key) < 0) {
-            parent->left = newNode;
+    while (current) {
+        parent = current;
+        if (strcmp(key, current->key) < 0) {
+            current = current->left;
+        } else if (strcmp(key, current->key) > 0) {
+            current = current->right;
         } else {
-            parent->right = newNode;
+            // A chave já existe; não insere novamente
+            return root;
         }
+    }
+
+    newNode = createNode(key);
+
+    if (strcmp(key, parent->key) < 0) {
+        parent->left = newNode;
+    } else {
+        parent->right = newNode;
     }
 
     return root;
 }
 
-
-// Procura por uma chave na árvore
+// Procura por uma chave na árvore Patricia
 PatriciaNode* searchPatricia(PatriciaNode *root, char *key) {
     PatriciaNode *current = root;
-    long seeking_count = 0;
+    long long seeking_count = 0;
+
     while (current) {
-        //colisoes de busca
         seeking_count++;
         if (strcmp(key, current->key) < 0) {
             current = current->left;
@@ -119,12 +68,11 @@ PatriciaNode* searchPatricia(PatriciaNode *root, char *key) {
             return current;
         }
     }
-    
 
     return NULL;
 }
 
-// Libera a memória da árvore
+// Libera a memória da árvore Patricia
 void freePatricia(PatriciaNode *root) {
     if (!root) {
         return;
@@ -133,9 +81,67 @@ void freePatricia(PatriciaNode *root) {
     freePatricia(root->left);
     freePatricia(root->right);
     free(root->key);
+
+    InvertedIndexPatricia *temp;
+    while (root->InvertedIndexPatriciaRoot) {
+        temp = root->InvertedIndexPatriciaRoot;
+        root->InvertedIndexPatriciaRoot = root->InvertedIndexPatriciaRoot->next;
+        free(temp);
+    }
+
     free(root);
 }
 
+// Cria um novo índice invertido
+InvertedIndexPatricia* createInvertedIndexPatricia(int idDoc, int qtde) {
+    InvertedIndexPatricia *new = (InvertedIndexPatricia *)malloc(sizeof(InvertedIndexPatricia));
+    if (!new) {
+        perror("Failed to allocate memory for InvertedIndexPatricia");
+        exit(EXIT_FAILURE);
+    }
+    new->idDoc = idDoc;
+    new->qtde = qtde;
+    new->next = NULL;
+    return new;
+}
+
+// Insere um índice invertido em um nó
+void insertInvertedIndexPatricia(PatriciaNode *node, int idDoc, int qtde) {
+    InvertedIndexPatricia *new = createInvertedIndexPatricia(idDoc, qtde);
+    InvertedIndexPatricia *current = node->InvertedIndexPatriciaRoot;
+    if (current == NULL) {
+        node->InvertedIndexPatriciaRoot = new;
+    } else {
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new;
+    }
+}
+
+// Imprime a árvore Patricia
+void printPatricia(PatriciaNode *root) {
+    if (!root) {
+        return;
+    }
+
+    printPatricia(root->left);
+
+    printf("Key: %s ->", root->key);
+    printf(" (Seeking: %lld)", root->seeking_count);
+
+    InvertedIndexPatricia *currentInvertedIndex = root->InvertedIndexPatriciaRoot;
+
+    while (currentInvertedIndex != NULL) {
+        printf(" (Doc: %d, Qtde: %d),", currentInvertedIndex->idDoc, currentInvertedIndex->qtde);
+        currentInvertedIndex = currentInvertedIndex->next;
+    }
+    printf("\n");
+
+    printPatricia(root->right);
+}
+
+// Conta o número de documentos com o termo na árvore Patricia
 int countDocumentsWithTermPatricia(PatriciaNode *node) {
     if (node == NULL || node->InvertedIndexPatriciaRoot == NULL) {
         return 0;
@@ -145,29 +151,11 @@ int countDocumentsWithTermPatricia(PatriciaNode *node) {
     InvertedIndexPatricia *aux = node->InvertedIndexPatriciaRoot;
 
     while (aux != NULL) {
-        if (aux->qtde > 0) {  // Verifica se o termo aparece no documento
+        if (aux->qtde > 0) {
             count++;
         }
-        aux = aux->nextInvertedIndexPatricia;
+        aux = aux->next;
     }
 
     return count;
 }
-
-
-
-/*int main() {
-    PatriciaNode *root = NULL;
-    root = insertPatricia(root, "Matheus");
-    root = insertPatricia(root, "Daniel");
-    root = insertPatricia(root, "Otavio");
-    root = insertPatricia(root, "ZEZE dasd");  
-
-    printf("Searching for 'apple': %s\n", searchPatricia(root, "Otavio") ? "Found" : "Not found");
-    printf("Searching for 'ZEZE': %s\n", searchPatricia(root, "ZEZE dasd") ? "Found" : "Not found");
-    printf("Searching for 'Otavio': %s\n", searchPatricia(root, "Daniel") ? "Found" : "Not found");
-    printf("Searching for 'orange': %s\n", searchPatricia(root, "orange") ? "Found" : "Not found");
-
-    freePatricia(root);
-    return 0;
-}*/

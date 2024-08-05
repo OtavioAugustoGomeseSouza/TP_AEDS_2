@@ -39,6 +39,7 @@ void CalculoRi(SearchType *searchType, TermoBusca *termoBusca, RelevanciaRi *r, 
         }
         vetMaior[i] = maiorRelev;
         idArqMaiorRelev[i] = idMaior;
+        //printf("Relevância total para o documento %d: %.2f\n", idArqMaiorRelev[i]+1, r[idArqMaiorRelev[i]].ri);
         r[idMaior].ri = 0.0;
     
     }
@@ -53,47 +54,53 @@ void CalculoRi(SearchType *searchType, TermoBusca *termoBusca, RelevanciaRi *r, 
     free(s);
 }
 
-//Função para Calcular a Arvore Patricia
+// Função para calcular W(i) para a árvore Patricia
 void CalculodeWiPatricia(SearchType *searchType, TermoBusca *termoBusca, int numTermos, FileType *ListaArquivos) {
-    //Alocar Memoria
+    if (searchType == NULL || termoBusca == NULL || ListaArquivos == NULL) {
+        fprintf(stderr, "Argumentos inválidos.\n");
+        return;
+    }
+
+    // Alocar memória
     RelevanciaWi *w = malloc(searchType->numArq * sizeof(RelevanciaWi));
     RelevanciaRi *r = malloc(searchType->numArq * sizeof(RelevanciaRi));
-    //Como s é um somatorio, calloc inicia a memoria com zero
     SomatorioWi *s = calloc(searchType->numArq, sizeof(SomatorioWi));
 
     if (w == NULL || r == NULL || s == NULL) {
         fprintf(stderr, "Erro ao alocar memória.\n");
+        free(w);
+        free(r);
+        free(s);
         exit(1);
     }
 
-    //Iniciar a Estruturas
+    // Inicializar estruturas
     for (int j = 0; j < searchType->numArq; j++) {
         w[j].idDoc = -1;
         w[j].wi = 0.0;
         s[j].soma = 0.0;
     }
 
-    //Calculo de cada termo de busca
+    // Calcular W(i) para cada termo de busca
     for (int i = 0; i < numTermos; i++) {
-        PatriciaNode* noAtual = searchPatricia(searchType->root, termoBusca[i].ingrediente);
+        PatriciaNode *noAtual = searchPatricia(searchType->root, termoBusca[i].ingrediente);
         if (noAtual != NULL && noAtual->InvertedIndexPatriciaRoot != NULL) {
-            //Conta o total de arq q tem o termo
             int numDocsWithTerm = countDocumentsWithTermPatricia(noAtual);
             InvertedIndexPatricia *current = noAtual->InvertedIndexPatriciaRoot;
             int totalDocs = searchType->numArq;
 
             while (current != NULL) {
-                //Calculo do W(i)
-                double peso = current->qtde * log2((double)totalDocs) / numDocsWithTerm;
+                double peso = current->qtde * log2((double)totalDocs)/ numDocsWithTerm;
                 
-                //Armazena o W(i) e ++no somatorio
                 int docIndex = current->idDoc;
                 if (docIndex >= 0 && docIndex < searchType->numArq) {
                     w[docIndex].idDoc = docIndex;
                     w[docIndex].wi = peso;
                     s[docIndex].soma += peso;
+                } else {
+                    fprintf(stderr, "ID do documento fora dos limites: %d\n", docIndex);
                 }
-                /*Prints para teste do valor de W(i)
+                /*Prints para teste
                 printf("Termo: %s\n", termoBusca[i].ingrediente);
                 printf("Documento: %d\n", w[docIndex].idDoc);
                 printf("Quantidade no documento: %d\n", current->qtde);
@@ -101,15 +108,17 @@ void CalculodeWiPatricia(SearchType *searchType, TermoBusca *termoBusca, int num
                 printf("Número de documentos com o termo: %d\n", numDocsWithTerm);
                 printf("Peso calculado: %.2f\n", peso);
                 */
-                //Avança na lista encadeada
-                current = current->nextInvertedIndexPatricia;
+                // Avança na lista encadeada
+                current = current->next;
             }
         } else {
             printf("Termo '%s' não encontrado.\n", termoBusca[i].ingrediente);
         }
     }
-    printf("Calculando R(i) pela Arvore Patricia\n");
+
+    printf("Calculando R(i) pela árvore Patricia\n");
     CalculoRi(searchType, termoBusca, r, s, ListaArquivos);
+
     free(w);
 }
 
@@ -160,6 +169,7 @@ void CalculodeWiHash(SearchType *searchType, TermoBusca *termoBusca, int numTerm
                 printf("Número de documentos com o termo: %d\n", numDocsWithTerm);
                 printf("Peso calculado: %.2f\n", peso);
                 */
+                
                 //continua na lista encadeada
                 current = current->nextInvertedIndex;
             }

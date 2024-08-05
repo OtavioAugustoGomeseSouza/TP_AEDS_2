@@ -1,43 +1,42 @@
 #include "TAD_Arquivo.h"
 
-FileType* readentradaFile(const char *fileName , SearchType *searchType) {
+FileType* readentradaFile(const char *fileName, SearchType *searchType) {
     FILE *file = fopen(fileName, "r");
     if (file == NULL) {
         perror("Erro ao abrir o arquivo");
-        return;
+        return NULL;  // Corrigido: retorna NULL em caso de erro
     }
 
     int numFiles;
     if (fscanf(file, "%d", &numFiles) != 1) {
         printf("Erro ao ler o número de arquivos\n");
         fclose(file);
-        return;
+        return NULL;  // Corrigido: retorna NULL em caso de erro
     }
-    //printf("Número de arquivos: %d\n", numFiles);
 
     // Adiciona um espaço adicional para o caractere de nova linha no final da string
     FileType *files = malloc(numFiles * sizeof(FileType));
     if (files == NULL) {
         printf("Erro ao alocar memória\n");
         fclose(file);
-        return;
+        return NULL;  // Corrigido: retorna NULL em caso de erro
     }
 
     // Limpar o buffer de nova linha que pode ter sido deixado por fscanf
     fgetc(file);
 
     for (int i = 0; i < numFiles; i++) {
-        // Limita a leitura para o tamanho do array
         if (fgets(files[i].fileName, sizeof(files[i].fileName), file) == NULL) {
             printf("Erro ao ler o nome do arquivo\n");
-            break;
+            free(files);  // Corrigido: libera memória alocada antes de retornar
+            fclose(file);
+            return NULL;  // Corrigido: retorna NULL em caso de erro
         }
 
         // Remove o caractere de nova linha, se houver
         files[i].fileName[strcspn(files[i].fileName, "\n")] = '\0';
 
         files[i].idDoc = i;
-        //printf("Arquivo: %s\n", files[i].fileName);
     }
 
     searchType->numArq = numFiles;
@@ -46,24 +45,17 @@ FileType* readentradaFile(const char *fileName , SearchType *searchType) {
     fclose(file);
 
     return files;
-
-
 }
 
-void readAllFiles(const char *fileName, FileType* files ,SearchType *searchType){
-
-    
-
+void readAllFiles(const char *fileName, FileType* files, SearchType *searchType) {
     for (int i = 0; i < searchType->numArq; i++) {
         readArquivoFile(files[i].fileName, searchType, &files[i]);
-        //printf("Nome arquivo: %s, Nome da pocao:%s, idDoc:%d inserido\n", files[i].fileName,files[i].potionName, files[i].idDoc);
+        // Considerando que readArquivoFile já trata os erros internamente
     }
     
     free(files);
-    //printf("Tempo Tabela Hash: %.4f segundos\n", searchType->hashTable.tempo);
-    //printf("Tempo Patricia: %.4f segundos\n", searchType->root->tempo);
-
 }
+
 
 
 void removeLeadingSpaces(char *str) {
@@ -99,27 +91,21 @@ void removeFinalDot(char *str) {
 
 
 void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType) {
-    
     char fullPath[512];
     snprintf(fullPath, sizeof(fullPath), "%s%s", "../Arquivos/ArquivosEntrada/", fileName);
- 
 
     FILE *file = fopen(fullPath, "r");
     if (file == NULL) {
         perror("Erro ao abrir o arquivo interno");
         return;
     }
-    //printf("chegou na potion\n");
 
     fgets(fileType->potionName, sizeof(fileType->potionName), file);
-    
-    //printf("%s\n", fileType->potionName);
 
     char ingredientes[1000];
     char *token;
     char *tokens[100];
     fgets(ingredientes, sizeof(ingredientes), file);
-    //printf("%s\n", ingredientes);
     int i = 0;
 
     token = strtok(ingredientes, ";");
@@ -127,66 +113,38 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
         tokens[i] = malloc((strlen(token) + 1) * sizeof(char));
         if (tokens[i] == NULL) {
             printf("Erro ao alocar memória\n");
+            break;  // Corrigido: quebra o loop em caso de erro
         }
         strcpy(tokens[i], token);
         removeLeadingSpaces(tokens[i]);
         removeFinalDot(tokens[i]);
-        //printf("%s\n", tokens[i]);
-        
-        
+
         searchType->root = insertPatricia(searchType->root, tokens[i]);
         insertHash(&searchType->hashTable, tokens[i], fileType->idDoc);
 
-
-        //printf("inseriu \n");
-
         i++;
-        token = strtok(NULL, ";");   
+        token = strtok(NULL, ";");
     }
 
     fileType->ni = i;
     char Preparo[1000];
     fgets(Preparo, sizeof(Preparo), file);
     removePunctuation(Preparo);
-    
-    //printPatriciaTree(searchType->root);
-    
 
-    for (int j = 0; j < i; j++)
-    {
-      
+    for (int j = 0; j < i; j++) {
         int timesAppeared = countOccurrences(Preparo, tokens[j]);
         HashNode *currentHashNode = searchHash(&searchType->hashTable, tokens[j]);
         insertInvertedIndexHash(currentHashNode, fileType->idDoc, timesAppeared);
-        insertInvertedIndexPatricia(searchPatricia(searchType->root, tokens[j]), fileType->idDoc, timesAppeared);
-
-    }
-
-    token = strtok(ingredientes, ";");
-
-}
-
-char *strcasestr(const char *haystack, const char *needle) {
-    if (!*needle) {
-        return (char *)haystack; // Se needle é uma string vazia, retorna haystack.
-    }
-
-    for (; *haystack; ++haystack) {
-        // Compara caracteres de haystack e needle ignorando a diferença entre maiúsculas e minúsculas.
-        if (tolower((unsigned char)*haystack) == tolower((unsigned char)*needle)) {
-            const char *h, *n;
-            for (h = haystack, n = needle; *h && *n; ++h, ++n) {
-                if (tolower((unsigned char)*h) != tolower((unsigned char)*n)) {
-                    break;
-                }
-            }
-            if (!*n) { // Se a string needle inteira foi encontrada.
-                return (char *)haystack;
-            }
+        PatriciaNode *node = searchPatricia(searchType->root, tokens[j]);
+        if (node != NULL) {
+            insertInvertedIndexPatricia(node, fileType->idDoc, timesAppeared);
         }
+        free(tokens[j]);  // Corrigido: libera a memória alocada para tokens
     }
-    return NULL; // Se não encontrou a string needle em haystack.
+
+    fclose(file);
 }
+
 
 void removePunctuation(char *str) {
     char *src = str, *dst = str;
@@ -198,6 +156,34 @@ void removePunctuation(char *str) {
     }
     *dst = '\0';
 }
+
+
+// Implementação própria de strcasestr
+char *strcasestr(const char *haystack, const char *needle) {
+    if (!*needle) {
+        return (char *)haystack;  // Se needle é uma string vazia, retorna haystack.
+    }
+
+    while (*haystack) {
+        if (tolower((unsigned char)*haystack) == tolower((unsigned char)*needle)) {
+            const char *h = haystack;
+            const char *n = needle;
+
+            while (*h && *n && tolower((unsigned char)*h) == tolower((unsigned char)*n)) {
+                ++h;
+                ++n;
+            }
+
+            if (!*n) {
+                return (char *)haystack;
+            }
+        }
+        ++haystack;
+    }
+
+    return NULL;  // Se não encontrou a string needle em haystack.
+}
+
 
 int countOccurrences(const char *a, const char *b){
     int count = 0;
