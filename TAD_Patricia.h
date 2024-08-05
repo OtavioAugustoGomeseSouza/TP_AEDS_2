@@ -1,5 +1,8 @@
 #ifndef TAD_PATRICIA_H
 #define TAD_PATRICIA_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 typedef struct {
 	int idDoc;

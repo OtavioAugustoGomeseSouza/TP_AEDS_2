@@ -4,6 +4,8 @@
         "time.h": "c",
         "tad_arquivo.h": "c",
         "TAD_Relevancia.C": "cpp",
-        "tad_menu.h": "c"
+        "tad_menu.h": "c",
+        "stdlib.h": "c",
+        "string.h": "c"
     }
 }

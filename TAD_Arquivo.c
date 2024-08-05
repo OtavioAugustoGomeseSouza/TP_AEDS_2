@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 #include "TAD_Arquivo.h"
 
 FileType* readentradaFile(const char *fileName , SearchType *searchType) {
@@ -64,8 +60,8 @@ void readAllFiles(const char *fileName, FileType* files ,SearchType *searchType)
     }
     
     free(files);
-    printf("Tempo Tabela Hash: %.4f segundos\n", searchType->hashTable.tempo);
-    printf("Tempo Patricia: %.4f segundos\n", searchType->root->tempo);
+    //printf("Tempo Tabela Hash: %.4f segundos\n", searchType->hashTable.tempo);
+    //printf("Tempo Patricia: %.4f segundos\n", searchType->root->tempo);
 
 }
 

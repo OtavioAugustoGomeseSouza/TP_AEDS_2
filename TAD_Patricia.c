@@ -1,8 +1,4 @@
 #include "TAD_Patricia.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 
 void printPatricia(PatriciaNode *root) {
     if (!root) {
@@ -66,7 +62,7 @@ PatriciaNode* createNode(char *key) {
     node->right = NULL;
     node->InvertedIndexPatriciaRoot = NULL;
     node->bit = 0;  // Pode ser usado como uma flag para indicar se é folha
-    node->tempo = 0.0;
+    //node->tempo = 0.0;
     return node;
 }
 

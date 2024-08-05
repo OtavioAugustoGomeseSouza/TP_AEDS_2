@@ -1,8 +1,4 @@
 #include "TAD_TabelaHash.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/time.h>
 
 #define HASH_SIZE 100  // Tamanho da tabela hash
 #define N 100  // Número de pesos
@@ -15,7 +11,7 @@ void initHashTable(HashTable *hashTable) {
         hashTable->tableRoot[i] = NULL;
     }
     hashTable->p = GeraPesos();
-    hashTable->tempo = 0.0;
+    //hashTable->tempo = 0.0;
 }
 
 // Função de hash simples
