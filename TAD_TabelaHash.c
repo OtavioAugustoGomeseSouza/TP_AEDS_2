@@ -3,7 +3,7 @@
 #define HASH_SIZE 100  // Tamanho da tabela hash
 #define N 100  // Número de pesos
 
-// Definir TipoPesos
+//Definir TipoPesos
 typedef int TipoPesos[N];
 
 void initHashTable(HashTable *hashTable) {
@@ -11,22 +11,18 @@ void initHashTable(HashTable *hashTable) {
         hashTable->tableRoot[i] = NULL;
     }
     hashTable->p = GeraPesos();
-    //hashTable->tempo = 0.0;
 }
 
-// Função de hash simples
-unsigned int hash_function(char *key, TipoPesos *p) {
-    //printf("entrou na função hash_function\n");   
+//Função de hash simples
+unsigned int hash_function(char *key, TipoPesos *p) {  
     unsigned int hash = 0;
     for (int i = 0; key[i] != '\0'; i++) {
         hash = hash + key[i] * (*p)[i];
-        //printf("%d\n", (*p)[i]);
     }
-    //printf("saiu do for\n");
     return hash % HASH_SIZE;
 }
 
-// Cria um novo nó da tabela hash
+//Cria um novo nó da tabela hash
 HashNode* createHashNode(char *key) {
     HashNode *node = (HashNode *)malloc(sizeof(HashNode));
     if (node) {
@@ -39,6 +35,7 @@ HashNode* createHashNode(char *key) {
     return node;
 }
 
+//Cria um novo index invertido
 InvertedIndex* createInvertedIndex(int idDoc, int qtde) {
     InvertedIndex *new = (InvertedIndex *)malloc(sizeof(InvertedIndex));
     new->idDoc = idDoc;
@@ -48,6 +45,7 @@ InvertedIndex* createInvertedIndex(int idDoc, int qtde) {
     return new;
 }
 
+//Insere um index invertido na tabela hash
 void insertInvertedIndexHash(HashNode *node, int idDoc, int qtde) {
     InvertedIndex *new = createInvertedIndex(idDoc, qtde);
     InvertedIndex *current = node->invertedIndexRoot;
@@ -62,6 +60,7 @@ void insertInvertedIndexHash(HashNode *node, int idDoc, int qtde) {
     }
 }
 
+//Busca um index invertido na tabela hash
 InvertedIndex* searchInvertedIndex(HashNode *node, int idDoc) {
     InvertedIndex *current = node->invertedIndexRoot;
 
@@ -75,24 +74,13 @@ InvertedIndex* searchInvertedIndex(HashNode *node, int idDoc) {
     return NULL;
 }
 
-// Inserção na tabela hash
+//Inserção na tabela hash
 void insertHash(HashTable *hashTable, char *key, int idDoc) {
-    //printf("entrou na função inserir hash\n");
     unsigned int hash = hash_function(key, hashTable->p);
-    //printf("saiu da função hash_function\n");
     HashNode *currentHashNode = hashTable->tableRoot[hash];
 
     while (currentHashNode != NULL) {
         if (strcmp(currentHashNode->key, key) == 0) {
-            
-            /*InvertedIndex *currentInvertedIndex = searchInvertedIndex(currentHashNode, idDoc);
-            if (currentInvertedIndex == NULL)
-            {
-                insertInvertedIndex(currentHashNode, idDoc, 1);
-            }else{
-                currentInvertedIndex->qtde++;
-            }
-            */
             return;
         }
         currentHashNode = currentHashNode->nextHashNode;
@@ -100,14 +88,11 @@ void insertHash(HashTable *hashTable, char *key, int idDoc) {
     }
     //currentHashNode->colisoes = colisoes;
     HashNode *newNode = createHashNode(key);
-    //printf("criou o novo nó hash\n");
     newNode->nextHashNode = hashTable->tableRoot[hash];
-    //printf("apontando para o primeiro nó hash\n");
     hashTable->tableRoot[hash] = newNode;
-    //insertInvertedIndex(newNode, idDoc, 1);
 }
 
-// Busca na tabela hash
+//Busca na tabela hash
 HashNode* searchHash(HashTable *hashTable, char *key) {
     unsigned int hash = hash_function(key, hashTable->p);
     HashNode *current = hashTable->tableRoot[hash];
@@ -126,7 +111,7 @@ HashNode* searchHash(HashTable *hashTable, char *key) {
     return NULL;
 }
 
-// Libera a memória da tabela hash
+//Libera a memória da tabela hash
 void freeHashTable(HashTable *hashTable) {
     for (int i = 0; i < HASH_SIZE; i++) {
         HashNode *current = hashTable->tableRoot[i];
@@ -140,12 +125,12 @@ void freeHashTable(HashTable *hashTable) {
     free(hashTable->p);
 }
 
-// Função para gerar pesos aleatórios
+//Função para gerar pesos aleatórios
 TipoPesos* GeraPesos() {
 
     struct timeval semente;
     TipoPesos *p = (TipoPesos *)malloc(sizeof(TipoPesos));
-    // Utilizar o tempo como semente para a função srand()
+    //Utilizar o tempo como semente para a função srand()
     gettimeofday(&semente, NULL);
     srand((int)(semente.tv_sec + 1000000 * semente.tv_usec));
     for (int i = 0; i < N; i++)
@@ -159,7 +144,7 @@ int compareStrings(const void *a, const void *b) {
 
 
 void printHashTable(HashTable *hashTable){
-    // Contar número de chaves na tabela hash
+    //Contar número de chaves na tabela hash
     int count = 0;
     for (int i = 0; i < HASH_SIZE; i++) {
         HashNode *current = hashTable->tableRoot[i];
@@ -169,7 +154,7 @@ void printHashTable(HashTable *hashTable){
         }
     }
 
-    // Armazenar chaves em um array
+    //Armazenar chaves em um array
     char **keys = (char **)malloc(count * sizeof(char *));
     int index = 0;
     for (int i = 0; i < HASH_SIZE; i++) {
@@ -181,12 +166,12 @@ void printHashTable(HashTable *hashTable){
     }
 
     
-    // Ordenar o array de chaves
+    //Ordenar o array de chaves
     qsort(keys, count, sizeof(char *), compareStrings);
 
 
 
-    // Imprimir chaves e índices invertidos em ordem alfabética
+    //Imprimir chaves e índices invertidos em ordem alfabética
     printf("Chaves inseridas na tabela hash em ordem alfabética:\n");
     for (int i = 0; i < count; i++) {
         HashNode *node = searchHash(hashTable, keys[i]);
@@ -200,10 +185,11 @@ void printHashTable(HashTable *hashTable){
         printf("\n");
     }
 
-    // Liberar memória alocada para o array de chaves
+    //Liberar memória alocada para o array de chaves
     free(keys);  
 }
 
+//Conta quantos documentos tem a palavra
 int countDocumentsWithTermHash(HashNode *node) {
     if (node == NULL || node->invertedIndexRoot == NULL) {
         return 0;
@@ -213,7 +199,7 @@ int countDocumentsWithTermHash(HashNode *node) {
     InvertedIndex *aux = node->invertedIndexRoot;
 
     while (aux != NULL) {
-        if (aux->qtde > 0) {  // Verifica se o termo aparece no documento
+        if (aux->qtde > 0) {  //Verifica se o termo aparece no documento
             count++;
         }
         aux = aux->nextInvertedIndex;
@@ -221,4 +207,3 @@ int countDocumentsWithTermHash(HashNode *node) {
 
     return count;
 }
-

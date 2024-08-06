@@ -1,39 +1,40 @@
 #include "TAD_Arquivo.h"
 
+//Le o primeiro arquivo da entrada
 FileType* readentradaFile(const char *fileName, SearchType *searchType) {
     FILE *file = fopen(fileName, "r");
     if (file == NULL) {
         perror("Erro ao abrir o arquivo");
-        return NULL;  // Corrigido: retorna NULL em caso de erro
+        return NULL;
     }
 
     int numFiles;
     if (fscanf(file, "%d", &numFiles) != 1) {
         printf("Erro ao ler o número de arquivos\n");
         fclose(file);
-        return NULL;  // Corrigido: retorna NULL em caso de erro
+        return NULL;
     }
 
-    // Adiciona um espaço adicional para o caractere de nova linha no final da string
+    //Adiciona um espaço adicional para o caractere de nova linha no final da string
     FileType *files = malloc(numFiles * sizeof(FileType));
     if (files == NULL) {
         printf("Erro ao alocar memória\n");
         fclose(file);
-        return NULL;  // Corrigido: retorna NULL em caso de erro
+        return NULL;
     }
 
-    // Limpar o buffer de nova linha que pode ter sido deixado por fscanf
+    //Limpar o buffer de nova linha que pode ter sido deixado por fscanf
     fgetc(file);
 
     for (int i = 0; i < numFiles; i++) {
         if (fgets(files[i].fileName, sizeof(files[i].fileName), file) == NULL) {
             printf("Erro ao ler o nome do arquivo\n");
-            free(files);  // Corrigido: libera memória alocada antes de retornar
+            free(files);
             fclose(file);
-            return NULL;  // Corrigido: retorna NULL em caso de erro
+            return NULL;
         }
 
-        // Remove o caractere de nova linha, se houver
+        //Remove o caractere de nova linha, se houver
         files[i].fileName[strcspn(files[i].fileName, "\n")] = '\0';
 
         files[i].idDoc = i;
@@ -57,7 +58,7 @@ void readAllFiles(const char *fileName, FileType* files, SearchType *searchType)
 }
 
 
-
+//Remove espaços iniciais
 void removeLeadingSpaces(char *str) {
     char *start = str;
 
@@ -76,6 +77,7 @@ void removeLeadingSpaces(char *str) {
     }
 }
 
+//Remove ponto final
 void removeFinalDot(char *str) {
     int len = strlen(str);
     // Verifica se a última posição tem um ponto final e, se sim, remove-o
@@ -89,7 +91,7 @@ void removeFinalDot(char *str) {
     }
 }
 
-
+//Le os arquivos internos
 void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType) {
     char fullPath[512];
     snprintf(fullPath, sizeof(fullPath), "%s%s", "../Arquivos/ArquivosEntrada/", fileName);
@@ -107,13 +109,13 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
     char *tokens[100];
     fgets(ingredientes, sizeof(ingredientes), file);
     int i = 0;
-
+    //Separa os ingredientes por ponto e vírgula
     token = strtok(ingredientes, ";");
     while (token != NULL && i < 100) {
         tokens[i] = malloc((strlen(token) + 1) * sizeof(char));
         if (tokens[i] == NULL) {
             printf("Erro ao alocar memória\n");
-            break;  // Corrigido: quebra o loop em caso de erro
+            break;
         }
         strcpy(tokens[i], token);
         removeLeadingSpaces(tokens[i]);
@@ -126,8 +128,9 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
         i++;
         token = strtok(NULL, ";");
     }
-
+    //Salva o número de ingredientes
     fileType->ni = i;
+    //Lê o preparo
     char Preparo[1000];
     fgets(Preparo, sizeof(Preparo), file);
     removePunctuation(Preparo);
@@ -138,13 +141,13 @@ void readArquivoFile(char *fileName, SearchType *searchType, FileType *fileType)
         insertInvertedIndexHash(currentHashNode, fileType->idDoc, timesAppeared);
         //printf("inseriu %s\n", tokens[j]);
         insertInvertedIndexPatricia(Pesquisa(tokens[j],searchType->root), fileType->idDoc, timesAppeared);
-        free(tokens[j]);  // Corrigido: libera a memória alocada para tokens
+        free(tokens[j]);
     }
 
     fclose(file);
 }
 
-
+//Remove pontuação
 void removePunctuation(char *str) {
     char *src = str, *dst = str;
     while (*src) {
@@ -157,10 +160,10 @@ void removePunctuation(char *str) {
 }
 
 
-// Implementação própria de strcasestr
+//Implementação própria de strcasestr, responsavel por comparar as palavras ignorando maiúsculas e minúsculas
 char *strcasestr(const char *haystack, const char *needle) {
     if (!*needle) {
-        return (char *)haystack;  // Se needle é uma string vazia, retorna haystack.
+        return (char *)haystack;  //Se needle é uma string vazia, retorna haystack.
     }
 
     while (*haystack) {
@@ -180,11 +183,11 @@ char *strcasestr(const char *haystack, const char *needle) {
         ++haystack;
     }
 
-    return NULL;  // Se não encontrou a string needle em haystack.
+    return NULL;  //Se não encontrou a string needle em haystack.
 }
 
 
-//
+//Conta a ocorrência da palavra dentro do arquivo
 int countOccurrences(const char *a, const char *b){
     int count = 0;
     size_t lenb = strlen(b);

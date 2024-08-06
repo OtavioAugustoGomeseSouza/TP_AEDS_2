@@ -1,10 +1,6 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/time.h>
 #include "TAD_Patricia.h"
 
-
+//Cria um novo index invertido
 InvertedIndexPatricia* createInvertedIndexPatricia(int idDoc, int qtde) {
     InvertedIndexPatricia *new = (InvertedIndexPatricia *)malloc(sizeof(InvertedIndexPatricia));
     new->idDoc = idDoc;
@@ -13,7 +9,7 @@ InvertedIndexPatricia* createInvertedIndexPatricia(int idDoc, int qtde) {
     return new;
 }
 
-// Função para inserir um índice invertido na raiz do nó
+//Função para inserir um índice invertido na raiz do nó
 void insertInvertedIndexPatricia(TipoArvore node, int idDoc, int qtde) {
     InvertedIndexPatricia *new = createInvertedIndexPatricia(idDoc, qtde);
     InvertedIndexPatricia *current = node->InvertedIndexPatriciaRoot;
@@ -29,10 +25,11 @@ void insertInvertedIndexPatricia(TipoArvore node, int idDoc, int qtde) {
 }
 
 short EExterno(TipoArvore p)
-{ /* Verifica se p é um nodo externo */
+{ //Verifica se p é um nodo externo
   return (p->nt == Externo);
 }
 
+//Cria um nó interno
 TipoArvore CriaNoInt(int i,char Char_maior, TipoArvore Esq, TipoArvore Dir)
 {
   TipoArvore p = (TipoArvore)malloc(sizeof(TipoPatNo));
@@ -44,15 +41,17 @@ TipoArvore CriaNoInt(int i,char Char_maior, TipoArvore Esq, TipoArvore Dir)
   return p;
 } 
 
+//Cria um nó externo
 TipoArvore CriaNoExt(TipoChave k)
 {
   TipoArvore p = (TipoArvore)malloc(sizeof(TipoPatNo));
   p->nt = Externo; 
   p->InvertedIndexPatriciaRoot = NULL;
-  p->NO.Chave = strdup(k);  // Aloca memória para a string
+  p->NO.Chave = strdup(k);  //Aloca memória para a string
   return p;
 }  
 
+//Pesquisa na árvore Patricia e retorna o nó contem a chave buscada
 TipoArvore Pesquisa(TipoChave k, TipoArvore t)
 {
   if (EExterno(t)) 
@@ -64,7 +63,6 @@ TipoArvore Pesquisa(TipoChave k, TipoArvore t)
         return t;
     }
      else{
-        //printf("chave %s , chave externo %s\n",k,t->NO.Chave);
         //printf("chave nao encontrada %s\n",k);
         return NULL;
      }
@@ -77,17 +75,14 @@ TipoArvore Pesquisa(TipoChave k, TipoArvore t)
     return Pesquisa(k, t->NO.NInterno.Dir);
 } 
 
+//Percorre a arvore e encontra a posição adequada para inserir os novos nós internos e externos
 TipoArvore InsereEntre(TipoChave k, TipoArvore t, int i)
 {
-   // printf("inserindo %s no interno\n", k);
   TipoArvore p;
- // printf("i = %d, index = %d\n", i, t->NO.NInterno.Index);
     if (EExterno(t))
-    { /* cria um novo nodo externo */
-    //printf("inserindo %s no ||externo|| k[i]=%c e t->NO.Chave[i]=%c\n", k, k[i], t->NO.Chave[i]);
-        // printf("é externo\n");
+    { //cria um novo nodo externo
         p = CriaNoExt(k);
-        char char_maior = (k[i] > t->NO.Chave[i]) ? k[i] : t->NO.Chave[i]; // Assume k tem um caractere na posição i
+        char char_maior = (k[i] > t->NO.Chave[i]) ? k[i] : t->NO.Chave[i]; //Assume k tem um caractere na posição i
         if (k[i] > t->NO.Chave[i]) 
             return CriaNoInt(i, char_maior, t, p);
         else 
@@ -95,13 +90,6 @@ TipoArvore InsereEntre(TipoChave k, TipoArvore t, int i)
     } 
     else 
     {
-       // printf("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n");
-       //printf("inserindo %s no interno\n", k);
-       //printf("k[t->NO.NInterno.Index]=%c e t->NO.NInterno.Char_maior=%c\n",k[t->NO.NInterno.Index], t->NO.NInterno.Char_maior);
-        /*if (k[t->NO.NInterno.Index] > t->NO.NInterno.Char_maior)
-        {
-            t->NO.NInterno.Char_maior = k[t->NO.NInterno.Index];
-        }*/
         if (k[t->NO.NInterno.Index] < t->NO.NInterno.Char_maior)
             t->NO.NInterno.Esq = InsereEntre(k, t->NO.NInterno.Esq, i);
         else
@@ -111,6 +99,7 @@ TipoArvore InsereEntre(TipoChave k, TipoArvore t, int i)
 
 }
 
+//Percorre a arvore ate encontrar o no externo e verifica se a chave já existe, caso n o exista insere a chave
 TipoArvore Insere(TipoChave k, TipoArvore t)
 {
     //printf("inserindo %s\n", k);
@@ -122,81 +111,31 @@ TipoArvore Insere(TipoChave k, TipoArvore t)
         TipoArvore p_ultimo =t;
         while (!EExterno(p)) 
         {
-            //printf("k[p->NO.NInterno.Index]=%c e p->NO.NInterno.Char_maior=%c\n",k[p->NO.NInterno.Index], p->NO.NInterno.Char_maior);
             if (k[p->NO.NInterno.Index] >= p->NO.NInterno.Char_maior)
             {
-                //p_ultimo = p;
                 p = p->NO.NInterno.Dir;
-                //printf("foi para direira\n");
             }
-               // p->NO.NInterno.Char_maior = k[p->NO.NInterno.Index];
             else if (k[p->NO.NInterno.Index] < p->NO.NInterno.Char_maior)
                 {
-                    //printf("foi para esquerda\n");
-                    //p_ultimo = p;
                     p = p->NO.NInterno.Esq;
                 }
             else 
-                //p_ultimo = p;
                 p = p->NO.NInterno.Dir;
         }
-        /* acha o primeiro caractere diferente */
+        //acha o primeiro caractere diferente
         int i = 0;
-        //printf("palavra %s k[i]=%c e p->NO.Chave[i]=%c\n",k, k[i], p->NO.Chave[i]);
         while (k[i] == p->NO.Chave[i])
             i++;
-
-       //printf("palavra %s k[i]=%c e p->NO.Chave[i]=%c\n",k, k[i], p->NO.Chave[i]);
-       //printf("p_ultimo->NO.NInterno.Index=%d , p_ultimo->NO.NInterno.Char_maior=%c\n",p_ultimo->NO.NInterno.Index, p_ultimo->NO.NInterno.Char_maior);
         if (strcoll(k, p->NO.Chave) == 0)
         { 
-            //printf("Erro: chave %s já está na árvore\n", k);
             return t; 
         } 
         else
-            /*if (k[i]>p->NO.Chave[i])
-            {
-                
-                p_ultimo = CriaNoInt(i,k[i],p,CriaNoExt(k));
-
-
-            }*/
-            
             return InsereEntre(k, t, i);
-            //return p;
     }
 }
 
-void ImprimeArvore(TipoArvore t, int nivel)
-{
-  if (t == NULL)
-        return;
-    for (int i = 0; i < nivel; i++)
-        printf("  ");
-    if (EExterno(t)){
-        printf("Externo: %s ->", t->NO.Chave);
-
-        if (t->InvertedIndexPatriciaRoot != NULL)
-        {
-            InvertedIndexPatricia *currentInvertedIndex = t->InvertedIndexPatriciaRoot;
-
-        while (currentInvertedIndex != NULL) {
-        printf(" (Doc: %d, Qtde: %d),", currentInvertedIndex->idDoc, currentInvertedIndex->qtde);
-        currentInvertedIndex = currentInvertedIndex->nextInvertedIndexPatricia;
-        }
-        printf("\n");
-        }
-        
-        
-    }
-    else
-    {
-       printf("Interno: Index %d, Char_maior %c\n", t->NO.NInterno.Index, t->NO.NInterno.Char_maior);
-        ImprimeArvore(t->NO.NInterno.Esq, nivel + 1);
-        ImprimeArvore(t->NO.NInterno.Dir, nivel + 1);
-    }
-}
-
+//Conta quantos documentos tem a palavra
 int countDocumentsWithTermPatricia(TipoArvore node) {
    // printf("countDocumentsWithTermPatricia\n");
     if (node == NULL || node->InvertedIndexPatriciaRoot == NULL) {
@@ -214,4 +153,48 @@ int countDocumentsWithTermPatricia(TipoArvore node) {
     }
 
     return count;
+}
+
+//Calcula o número de seekings da árvore Patricia
+int calculateSeekingsPatricia(TipoArvore root, TipoChave term) {
+    if (root == NULL) {
+        return 0;
+    }
+
+    int seekings = 0;
+    TipoArvore node = Pesquisa(term, root);
+
+    if (node != NULL && EExterno(node)) {
+        InvertedIndexPatricia *current = node->InvertedIndexPatriciaRoot;
+        while (current != NULL) {
+            seekings += current->qtde;
+            current = current->nextInvertedIndexPatricia;
+        }
+    }
+
+    return seekings;
+}
+
+//Imprime a árvore Patricia ordenada por ordem alfabética com o número de seekings
+void ImprimeArvoreOrdemAlfabeticaComSeekings(TipoArvore t) {
+    if (t == NULL)
+        return;
+    if (!EExterno(t)) {
+        ImprimeArvoreOrdemAlfabeticaComSeekings(t->NO.NInterno.Esq);
+        ImprimeArvoreOrdemAlfabeticaComSeekings(t->NO.NInterno.Dir);
+    } else {
+        int seekings = calculateSeekingsPatricia(t, t->NO.Chave);
+        printf("Chave: %s ->", t->NO.Chave);
+        printf(" (Seekings: %d) ", seekings);
+
+        if (t->InvertedIndexPatriciaRoot != NULL) {
+            InvertedIndexPatricia *currentInvertedIndex = t->InvertedIndexPatriciaRoot;
+
+            while (currentInvertedIndex != NULL) {
+                printf(" (Doc: %d, Qtde: %d),", currentInvertedIndex->idDoc, currentInvertedIndex->qtde);
+                currentInvertedIndex = currentInvertedIndex->nextInvertedIndexPatricia;
+            }
+        }
+        printf("\n");
+    }
 }

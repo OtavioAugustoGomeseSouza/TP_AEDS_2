@@ -39,7 +39,8 @@ void CalculoRi(SearchType *searchType, TermoBusca *termoBusca, RelevanciaRi *r, 
         }
         vetMaior[i] = maiorRelev;
         idArqMaiorRelev[i] = idMaior;
-        printf("Relevância total para o documento %d: %.2f\n", idArqMaiorRelev[i]+1, r[idArqMaiorRelev[i]].ri);
+        //print para teste
+        //printf("Relevância total para o documento %d: %.2f\n", idArqMaiorRelev[i]+1, r[idArqMaiorRelev[i]].ri);
         r[idMaior].ri = 0.0;
     
     }
@@ -184,6 +185,7 @@ void CalculodeWiHash(SearchType *searchType, TermoBusca *termoBusca, int numTerm
     free(w);
 }
 
+//Le os termos que deseja buscar
 void readTermosBusca(TermoBusca *termoBusca, int numTermos) {
     //Limpa o buffer de entrada
     while (getchar() != '\n');
@@ -203,14 +205,14 @@ void readTermosBusca(TermoBusca *termoBusca, int numTermos) {
     }
 }
 
-
+//Menu de Opções
 void menu(char *nomeArquivo, SearchType *searchType) {
-    int opcao = 0; // Inicializa a variável opcao
-    FileType *ListaArquivos = NULL; // Inicializa a variável ListaArquivos
+    int opcao = 0;
+    FileType *ListaArquivos = NULL;
 
     while (opcao != 5) {
         printf("\n\t MENU:\n [1] Receber arquivos de entrada\n [2] Construir Índice Invertido\n [3] Imprimir\n [4] Buscar ingrediente\n [5] Sair\nEscolha: ");
-        opcao = getInt(); // Lê a opção do usuário
+        opcao = getInt();
         
         switch (opcao) {
             case 1:
@@ -227,7 +229,7 @@ void menu(char *nomeArquivo, SearchType *searchType) {
                 switch (opcao2) {
                     case 1:
                         printf("Árvore Patricia\n");
-                        ImprimeArvore(searchType->root, 0);
+                        ImprimeArvoreOrdemAlfabeticaComSeekings(searchType->root);
                         break;
                     case 2:
                         printf("Tabela Hash\n");
@@ -246,7 +248,7 @@ void menu(char *nomeArquivo, SearchType *searchType) {
                     fprintf(stderr, "Erro ao alocar memória para TermoBusca\n");
                     exit(1);
                 }
-                readTermosBusca(termoBusca, numTermos); // Lê os termos compostos
+                readTermosBusca(termoBusca, numTermos); 
                 CalculodeWiPatricia(searchType, termoBusca, numTermos, ListaArquivos);
                 CalculodeWiHash(searchType, termoBusca, numTermos, ListaArquivos);
                 free(termoBusca);
