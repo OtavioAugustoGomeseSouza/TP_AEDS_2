@@ -29,4 +29,3 @@ void CalculodeWiPatricia(SearchType *searchType, TermoBusca *termoBusca, int num
 void CalculodeWiHash(SearchType *searchType, TermoBusca *termoBusca, int numTermos, FileType *ListaArquivos);
 
 void CalculoRi(SearchType *searchType, TermoBusca *termoBusca, RelevanciaRi *r, SomatorioWi *s, FileType *ListaArquivos);
-//void buscar(SearchType *searchType, char *ingrediente);

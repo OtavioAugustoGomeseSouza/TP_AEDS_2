@@ -184,6 +184,7 @@ char *strcasestr(const char *haystack, const char *needle) {
 }
 
 
+//
 int countOccurrences(const char *a, const char *b){
     int count = 0;
     size_t lenb = strlen(b);

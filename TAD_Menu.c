@@ -39,7 +39,7 @@ void CalculoRi(SearchType *searchType, TermoBusca *termoBusca, RelevanciaRi *r, 
         }
         vetMaior[i] = maiorRelev;
         idArqMaiorRelev[i] = idMaior;
-        //printf("Relevância total para o documento %d: %.2f\n", idArqMaiorRelev[i]+1, r[idArqMaiorRelev[i]].ri);
+        printf("Relevância total para o documento %d: %.2f\n", idArqMaiorRelev[i]+1, r[idArqMaiorRelev[i]].ri);
         r[idMaior].ri = 0.0;
     
     }
